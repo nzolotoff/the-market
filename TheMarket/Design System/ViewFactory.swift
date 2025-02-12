@@ -50,14 +50,15 @@ final class ViewFactory {
     // MARK: - TextField
     static func createTextfield(
         with placeholder: String,
+        placeholderColor: Color = .secondary,
         textStyle: TextStyle = .body,
-        textColor: Color = .secondary,
+        textColor: Color = .accent,
         backgroundColor: Color = .background,
         cornerRadius: CGFloat = 10
     ) -> UITextField {
         let textField = UITextField()
         
-        textField.placeholder = placeholder
+        textField.setPlaceholder(placeholder, color: placeholderColor)
         textField.font = textStyle.font
         textField.textColor = UIColor(color: textColor)
         textField.backgroundColor = UIColor(color: backgroundColor)
