@@ -25,18 +25,18 @@ struct FontDescription {
 }
 
 enum TextStyle {
-    case heading // 28 px sbd
-    case title1 // 16 px sbd
-    case title2 // 14 px sbd
+    case heading // 28 px semibold
+    case title1 // 16 px semibold
+    case title2 // 14 px semibold
     case titleLight // 14 px light
     
-    case body // 16 px md
+    case body // 16 px medium
     
-    case paragraph // 16px rg
-    case caption // 12 px rg
+    case paragraph // 16px regular
+    case caption // 12 px regular
     
-    case buttonPrimary // 16 px sbd
-    case buttonSecondary // 16 px rg
+    case buttonPrimary // 16 px semibold
+    case buttonSecondary // 16 px regular
 }
 
 extension TextStyle {

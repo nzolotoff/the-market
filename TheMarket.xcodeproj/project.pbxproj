@@ -14,7 +14,7 @@
 		FB4D03342D5B74E8003DC5F8 /* Exceptions for "TheMarket" folder in "TheMarket" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Other/Info.plist,
+				Application/Info.plist,
 			);
 			target = FB4D03212D5B74E4003DC5F8 /* TheMarket */;
 		};
