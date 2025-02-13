@@ -18,9 +18,10 @@ final class ItemsViewController: UIViewController {
                 systemName: "magnifyingglass",
                 withConfiguration: UIImage.SymbolConfiguration(weight: .medium)
             )
+            static let defaultDecrement: CGFloat = 85
+            static let focusedDecrement: CGFloat = 120
             static let topOffset: CGFloat = 12
             static let leadingOffset: CGFloat = 20
-            static let trailingOffset: CGFloat = 65
             static let height: CGFloat = 40
         }
         
@@ -33,10 +34,34 @@ final class ItemsViewController: UIViewController {
             static let leadingOffset: CGFloat = 12
         }
         
+        enum CancelButton {
+            static let title: String = "Cancel"
+            static let topOffset: CGFloat = 7
+            static let leadingOffset: CGFloat = 24
+        }
+        
         enum FilterStack {
             static let spacing: CGFloat = 8
             static let topOffset: CGFloat = 16
             static let horizontalOffset: CGFloat = 20
+        }
+        
+        enum ItemsCollection {
+            static let contentInset: UIEdgeInsets = UIEdgeInsets(
+                top: 16,
+                left: 20,
+                bottom: 16,
+                right: 20
+            )
+            static let cellHeight: CGFloat = 155
+            static let itemSpacing: CGFloat = 16
+            static let lineSpacing: CGFloat = 24
+            static let topOffset: CGFloat = 4
+        }
+        
+        enum SearchHistoryTable {
+            static let topOffset: CGFloat = 20
+            static let rowHeight: CGFloat = 40
         }
     }
     
@@ -45,11 +70,18 @@ final class ItemsViewController: UIViewController {
     
     // MARK: - UI Components
     private var searchTexfField: UITextField = UITextField()
+    private var searchTextFieldWidthConstraint: NSLayoutConstraint?
     private let cartButton: UIButton = UIButton(type: .system)
     private let contentView: UIView = UIView()
     private let categoryFilter: FilterView = FilterView(titleText: "Category")
     private let priceFilter: FilterView = FilterView(titleText: "Price")
     private let filterStack: UIStackView = UIStackView()
+    private let cancelButton: UIButton = UIButton(type: .system)
+    private let itemsCollection: UICollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewFlowLayout()
+    )
+    private let searchHistoryTable: UITableView = UITableView()
     
     // MARK: - Lyfecycle
     init(interactor: ItemsBusinessLogic) {
@@ -72,9 +104,12 @@ final class ItemsViewController: UIViewController {
         view.backgroundColor = .white
         configureNavigationBar()
         configureSearchTextField()
+        configureCancelButton()
         configureContentView()
         configureCartButton()
         configureFiltersStack()
+        configureItemsCollection()
+        configureSearchHistoryTable()
     }
     
     private func configureNavigationBar() {
@@ -85,6 +120,7 @@ final class ItemsViewController: UIViewController {
         searchTexfField = ViewFactory.createTextfield(with: Constants.SearchTextField.placeholder)
         searchTexfField.leftView = UIView(frame: Constants.SearchTextField.leftViewRect)
         searchTexfField.leftViewMode = .always
+        searchTexfField.delegate = self
         
         let searchImageView: UIImageView = UIImageView(frame: Constants.SearchTextField.leftImageViewRect)
         searchImageView.contentMode = .scaleAspectFit
@@ -95,8 +131,13 @@ final class ItemsViewController: UIViewController {
         view.addSubview(searchTexfField)
         searchTexfField.pinTop(to: view.safeAreaLayoutGuide.topAnchor, Constants.SearchTextField.topOffset)
         searchTexfField.pinLeft(to: view, Constants.SearchTextField.leadingOffset)
-        searchTexfField.pinRight(to: view, Constants.SearchTextField.trailingOffset)
         searchTexfField.setHeight(Constants.SearchTextField.height)
+        
+        searchTextFieldWidthConstraint = searchTexfField.widthAnchor.constraint(
+            equalToConstant: view.frame.width - Constants.SearchTextField.defaultDecrement
+        )
+        searchTextFieldWidthConstraint?.isActive = true
+        
     }
     
     private func configureCartButton() {
@@ -106,6 +147,18 @@ final class ItemsViewController: UIViewController {
         view.addSubview(cartButton)
         cartButton.pinLeft(to: searchTexfField.trailingAnchor, Constants.CartButton.leadingOffset)
         cartButton.pinTop(to: searchTexfField.topAnchor, Constants.CartButton.topOffset)
+    }
+    
+    private func configureCancelButton() {
+        cancelButton.backgroundColor = .clear
+        cancelButton.setTitle(Constants.CancelButton.title, for: .normal)
+        cancelButton.setTitleColor(UIColor(color: .buttonMinoryText), for: .normal)
+        cancelButton.isHidden = true
+        cancelButton.addTarget(self, action: #selector(cancelButtonWasTapped), for: .touchUpInside)
+        
+        view.addSubview(cancelButton)
+        cancelButton.pinTop(to: searchTexfField, Constants.CancelButton.topOffset)
+        cancelButton.pinLeft(to: searchTexfField.trailingAnchor, Constants.CancelButton.leadingOffset)
     }
     
     private func configureContentView() {
@@ -124,5 +177,171 @@ final class ItemsViewController: UIViewController {
         contentView.addSubview(filterStack)
         filterStack.pinTop(to: contentView.topAnchor, Constants.FilterStack.topOffset)
         filterStack.pinHorizontal(to: contentView, Constants.FilterStack.horizontalOffset)
+    }
+    
+    private func configureItemsCollection() {
+        itemsCollection.dataSource = self
+        itemsCollection.delegate = self
+        itemsCollection.backgroundColor = .white
+        itemsCollection.alwaysBounceVertical = true
+        itemsCollection.showsVerticalScrollIndicator = false
+        itemsCollection.contentInset = Constants.ItemsCollection.contentInset
+        itemsCollection.register(
+            ItemCell.self,
+            forCellWithReuseIdentifier: ItemCell.reuseIdentifier
+        )
+        
+        if let layout = itemsCollection.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.minimumInteritemSpacing = Constants.ItemsCollection.itemSpacing
+            layout.minimumLineSpacing = Constants.ItemsCollection.lineSpacing
+            
+            layout.invalidateLayout()
+        }
+        
+        contentView.addSubview(itemsCollection)
+        itemsCollection.pinTop(to: filterStack.bottomAnchor, Constants.ItemsCollection.topOffset)
+        itemsCollection.pinHorizontal(to: contentView)
+        itemsCollection.pinBottom(to: contentView)
+    }
+    
+    private func configureSearchHistoryTable() {
+        searchHistoryTable.backgroundColor = .white
+        searchHistoryTable.separatorStyle = .none
+        searchHistoryTable.dataSource = self
+        searchHistoryTable.delegate = self
+        searchHistoryTable.register(
+            SearchHistoryCell.self,
+            forCellReuseIdentifier: SearchHistoryCell.reuseIdentifier
+        )
+        
+        searchHistoryTable.isHidden = true
+        
+        view.addSubview(searchHistoryTable)
+        searchHistoryTable.pinTop(
+            to: searchTexfField.bottomAnchor,
+            Constants.SearchHistoryTable.topOffset
+        )
+        searchHistoryTable.pinHorizontal(to: view)
+        searchHistoryTable.pinBottom(to: view)
+    }
+    
+    // MARK: - Actions
+    @objc private func cancelButtonWasTapped() {
+        let defaultWidth = view.frame.width - Constants.SearchTextField.defaultDecrement
+        animateTextFieldWidth(to: defaultWidth)
+        searchTexfField.resignFirstResponder()
+        
+        cartButton.isHidden = false
+        contentView.isHidden = false
+        
+        cancelButton.isHidden = true
+        searchHistoryTable.isHidden = true
+    }
+    
+    // MARK: - Animations
+    private func animateTextFieldWidth(to newWidth: CGFloat) {
+        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+            self?.searchTextFieldWidthConstraint?.constant = newWidth
+            self?.view?.layoutIfNeeded()
+        })
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension ItemsViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let newWidth = view.bounds.width - Constants.SearchTextField.focusedDecrement
+        animateTextFieldWidth(to: newWidth)
+        cartButton.isHidden = true
+        contentView.isHidden = true
+        
+        cancelButton.isHidden = false
+        searchHistoryTable.isHidden = false
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension ItemsViewController: UICollectionViewDataSource {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        return 12
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ItemCell.reuseIdentifier,
+            for: indexPath
+        )
+        
+        guard let itemCell = cell as? ItemCell else {
+            return cell
+        }
+        
+        itemCell.configure(
+            with: ItemModel(
+                image: UIImage(named: "hoodie") ?? UIImage(),
+                title: "Denim jacket",
+                category: "clothes",
+                price: "100"
+            )
+        )
+        return cell
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension ItemsViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(width: (itemsCollection.bounds.width - 56) / 2, height: Constants.ItemsCollection.cellHeight)
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension ItemsViewController: UITableViewDataSource {
+    func tableView(
+        _ tableView: UITableView,
+        numberOfRowsInSection section: Int
+    ) -> Int {
+        1
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        cellForRowAt indexPath: IndexPath
+    ) -> UITableViewCell {
+        let cell = searchHistoryTable.dequeueReusableCell(
+            withIdentifier: SearchHistoryCell.reuseIdentifier,
+            for: indexPath
+        )
+        guard let searchHistoryCell = cell as? SearchHistoryCell else { return cell }
+        
+        searchHistoryCell.configure(
+            with: SearchQueryModel(query: "Denim Jacket")
+        )
+        return searchHistoryCell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension ItemsViewController: UITableViewDelegate {
+    func tableView(
+        _ tableView: UITableView,
+        heightForRowAt indexPath: IndexPath
+    ) -> CGFloat {
+        Constants.SearchHistoryTable.rowHeight
     }
 }
