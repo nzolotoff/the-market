@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ItemsViewController: UIViewController {
     // MARK: - Constants
     enum Constants {
         enum SearchTextField {
@@ -32,6 +32,12 @@ class ViewController: UIViewController {
             static let topOffset: CGFloat = 8
             static let leadingOffset: CGFloat = 12
         }
+        
+        enum FilterStack {
+            static let spacing: CGFloat = 8
+            static let topOffset: CGFloat = 16
+            static let horizontalOffset: CGFloat = 20
+        }
     }
     
     // MARK: - Fileds
@@ -40,6 +46,10 @@ class ViewController: UIViewController {
     // MARK: - UI Components
     private var searchTexfField: UITextField = UITextField()
     private let cartButton: UIButton = UIButton(type: .system)
+    private let contentView: UIView = UIView()
+    private let categoryFilter: FilterView = FilterView(titleText: "Category")
+    private let priceFilter: FilterView = FilterView(titleText: "Price")
+    private let filterStack: UIStackView = UIStackView()
     
     // MARK: - Lyfecycle
     init(interactor: ItemsBusinessLogic) {
@@ -62,7 +72,9 @@ class ViewController: UIViewController {
         view.backgroundColor = .white
         configureNavigationBar()
         configureSearchTextField()
+        configureContentView()
         configureCartButton()
+        configureFiltersStack()
     }
     
     private func configureNavigationBar() {
@@ -94,5 +106,23 @@ class ViewController: UIViewController {
         view.addSubview(cartButton)
         cartButton.pinLeft(to: searchTexfField.trailingAnchor, Constants.CartButton.leadingOffset)
         cartButton.pinTop(to: searchTexfField.topAnchor, Constants.CartButton.topOffset)
+    }
+    
+    private func configureContentView() {
+        view.addSubview(contentView)
+        contentView.pinTop(to: searchTexfField.bottomAnchor)
+        contentView.pinHorizontal(to: view)
+        contentView.pinBottom(to: view.bottomAnchor)
+    }
+    
+    private func configureFiltersStack() {
+        filterStack.axis = .horizontal
+        filterStack.distribution = .fillEqually
+        filterStack.spacing = Constants.FilterStack.spacing
+        filterStack.addArrangedSubviews(categoryFilter, priceFilter)
+        
+        contentView.addSubview(filterStack)
+        filterStack.pinTop(to: contentView.topAnchor, Constants.FilterStack.topOffset)
+        filterStack.pinHorizontal(to: contentView, Constants.FilterStack.horizontalOffset)
     }
 }

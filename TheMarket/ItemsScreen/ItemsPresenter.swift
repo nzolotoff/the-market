@@ -7,7 +7,7 @@
 
 final class Presenter: ItemsPresentationLogic {
     // MARK: - Variables
-    weak var view: ViewController?
+    weak var view: ItemsViewController?
     
     // MARK: - Methods
     func presentStart(_ response: ItemsModel.Start.Response) {
