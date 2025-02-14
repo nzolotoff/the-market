@@ -188,7 +188,7 @@ final class ItemsViewController: UIViewController {
         itemsCollection.delegate = self
         itemsCollection.backgroundColor = .white
         itemsCollection.alwaysBounceVertical = true
-        itemsCollection.showsVerticalScrollIndicator = false
+        itemsCollection.showsVerticalScrollIndicator = true
         itemsCollection.contentInset = Constants.ItemsCollection.contentInset
         itemsCollection.register(
             ItemCell.self,

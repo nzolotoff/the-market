@@ -17,7 +17,6 @@ enum CategoryModels {
 struct CategoryModel {
     var title: String
     var isSelected: Bool
-    
 }
 
 

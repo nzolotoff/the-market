@@ -22,11 +22,6 @@ final class ItemCell: UICollectionViewCell {
             static let TopOffset: CGFloat = 6
         }
         
-        enum categoryLabel {
-            static let lines: Int = 1
-            static let TopOffset: CGFloat = 4
-        }
-        
         enum priceLabel {
             static let lines: Int = 1
         }
@@ -38,7 +33,6 @@ final class ItemCell: UICollectionViewCell {
     private let wrapView: UIView = UIView()
     private let itemImageView: UIImageView = UIImageView()
     private var titleLabel: UILabel = UILabel()
-    private var categoryLabel: UILabel = UILabel()
     private var priceLabel: UILabel = UILabel()
     
     // MARK: - Lifecycle
@@ -50,14 +44,12 @@ final class ItemCell: UICollectionViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-        
     }
     
     // MARK: - Cell Configuration
     func configure(with model: ItemModel) {
         itemImageView.image = model.image
         titleLabel.text = model.title
-        categoryLabel.text = model.category
         priceLabel.text = "$" + model.price
     }
     
@@ -67,12 +59,10 @@ final class ItemCell: UICollectionViewCell {
         configureWrapView()
         configureItemImageView()
         configureTitleLabel()
-        configureCategoryLabel()
         configurePriceLabel()
     }
     
     private func configureWrapView() {
-        
         addSubview(wrapView)
         wrapView.pin(to: self)
         wrapView.backgroundColor = .white
@@ -103,20 +93,6 @@ final class ItemCell: UICollectionViewCell {
         titleLabel.pinHorizontal(to: wrapView)
     }
     
-    private func configureCategoryLabel() {
-        categoryLabel = ViewFactory.createLabel(
-            with: "",
-            textStyle: .caption,
-            textColor: .secondary,
-            alignment: .left,
-            lines: Constants.categoryLabel.lines
-        )
-        
-        wrapView.addSubview(categoryLabel)
-        categoryLabel.pinTop(to: titleLabel.bottomAnchor, Constants.categoryLabel.TopOffset)
-        categoryLabel.pinLeft(to: wrapView)
-    }
-    
     private func configurePriceLabel() {
         priceLabel = ViewFactory.createLabel(
             with: "",
@@ -127,7 +103,7 @@ final class ItemCell: UICollectionViewCell {
         )
         
         wrapView.addSubview(priceLabel)
-        priceLabel.pinRight(to: wrapView)
+        priceLabel.pinLeft(to: wrapView)
         priceLabel.pinBottom(to: wrapView)
         priceLabel.setContentCompressionResistancePriority(
             .defaultHigh,
