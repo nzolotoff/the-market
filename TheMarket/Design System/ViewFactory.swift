@@ -31,10 +31,10 @@ final class ViewFactory {
     // MARK: - Button
     static func createButton(
         with title: String,
-        textStyle: TextStyle,
-        textColor: Color,
-        buttonColor: Color,
-        cornerRadius: CGFloat
+        textStyle: TextStyle = .title1,
+        textColor: Color = .buttonTextPrimary,
+        buttonColor: Color = .accent,
+        cornerRadius: CGFloat = 16
     ) -> UIButton {
         let button = UIButton(type: .system)
         
@@ -47,17 +47,41 @@ final class ViewFactory {
         return button
     }
     
+    static func createSystemIconButton(
+        with systemName: String,
+        configuration: UIImage.SymbolConfiguration = UIImage.SymbolConfiguration(
+            pointSize: 16,
+            weight: .medium
+        ),
+        tintColor: Color
+    ) -> UIButton {
+        let imageButton = UIButton(type: .system)
+        
+        imageButton.backgroundColor = .clear
+        imageButton.tintColor = UIColor(color: tintColor)
+        imageButton.setImage(
+            UIImage(
+                systemName: systemName,
+                withConfiguration: configuration
+            ),
+            for: .normal
+        )
+        
+        return imageButton
+    }
+    
     // MARK: - TextField
     static func createTextfield(
         with placeholder: String,
+        placeholderColor: Color = .secondary,
         textStyle: TextStyle = .body,
-        textColor: Color = .secondary,
+        textColor: Color = .accent,
         backgroundColor: Color = .background,
         cornerRadius: CGFloat = 10
     ) -> UITextField {
         let textField = UITextField()
         
-        textField.placeholder = placeholder
+        textField.setPlaceholder(placeholder, color: placeholderColor)
         textField.font = textStyle.font
         textField.textColor = UIColor(color: textColor)
         textField.backgroundColor = UIColor(color: backgroundColor)

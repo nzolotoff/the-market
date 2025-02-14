@@ -8,10 +8,10 @@
 import UIKit
 
 enum Font: String {
-    case light = "SF-Pro-Rounded-Light"
-    case regular = "SF-Pro-Rounded-Regular"
-    case medium = "SF-Pro-Rounded-Medium"
-    case semibold = "SF-Pro-Rounded-Semibold"
+    case light = "SFProRounded-Light"
+    case regular = "SFProRounded-Regular"
+    case medium = "SFProRounded-Medium"
+    case semibold = "SFProRounded-Semibold"
     
     var name: String {
         return self.rawValue
@@ -33,6 +33,9 @@ enum TextStyle {
     case body // 16 px medium
     
     case paragraph // 16px regular
+    case paragraphSmall // 14px regular
+    
+    case medium // 14 px medium
     case caption // 12 px regular
     
     case buttonPrimary // 16 px semibold
@@ -54,6 +57,10 @@ extension TextStyle {
             return FontDescription(font: .medium, size: 16, style: .body)
         case .paragraph:
             return FontDescription(font: .regular, size: 16, style: .body)
+        case .paragraphSmall:
+            return FontDescription(font: .regular, size: 14, style: .body)
+        case .medium:
+            return FontDescription(font: .medium, size: 14, style: .body)
         case .caption:
             return FontDescription(font: .regular, size: 12, style: .caption1)
         case .buttonPrimary:
