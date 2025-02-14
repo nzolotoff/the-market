@@ -32,7 +32,6 @@ final class HeaderView: UIView {
     var leftButtonAction: (() -> Void)?
     var rightButtonAction: (() -> Void)?
     
-    
     // MARK: - Lyfecycle
     init(
         leftButtonImage: UIImage?,
