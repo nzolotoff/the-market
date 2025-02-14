@@ -23,7 +23,6 @@ final class CategoryViewController: UIViewController {
             static let rightButtonTitle: String = "Clear"
             static let height: CGFloat = 20
             static let topOffset: CGFloat = 16
-
         }
         
         enum CategoriesTable {
@@ -37,8 +36,6 @@ final class CategoryViewController: UIViewController {
             static let topOffset: CGFloat = 12
             static let emptySpace: CGFloat = 40
             static let height: CGFloat = 48
-
-
         }
     }
     
@@ -97,6 +94,7 @@ final class CategoryViewController: UIViewController {
     
     private func configureHeaderView() {
         setActionForLeftButton()
+        setActionForRightButton()
         
         view.addSubview(headerView)
         headerView.pinHorizontal(to: view)

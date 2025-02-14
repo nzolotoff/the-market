@@ -177,6 +177,7 @@ final class ItemsViewController: UIViewController {
         filterStack.addArrangedSubviews(categoryFilter, priceFilter)
         
         setActionForCategoryFilter()
+        setActionForPriceFilter()
         
         contentView.addSubview(filterStack)
         filterStack.pinTop(to: contentView.topAnchor, Constants.FilterStack.topOffset)
@@ -246,6 +247,12 @@ final class ItemsViewController: UIViewController {
     private func setActionForCategoryFilter() {
         categoryFilter.action = { [weak self] in
             self?.interactor.loadCategoryScreen()
+        }
+    }
+    
+    private func setActionForPriceFilter() {
+        priceFilter.action = { [weak self] in
+            self?.interactor.loadPriceScreen()
         }
     }
     

@@ -8,10 +8,12 @@
 protocol ItemsBusinessLogic {
     func loadStart(_ request: ItemsModel.Start.Request)
     func loadCategoryScreen()
+    func loadPriceScreen()
 }
 
 protocol ItemsPresentationLogic {
     func presentStart(_ response: ItemsModel.Start.Response)
     
     func routeToCategoryScreen()
+    func routeToPriceScreen()
 }

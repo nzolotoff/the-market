@@ -6,6 +6,7 @@
 //
 
 final class ItemsInteractor: ItemsBusinessLogic {
+    
     // MARK: - Fields
     private let presenter: ItemsPresentationLogic
     
@@ -22,4 +23,9 @@ final class ItemsInteractor: ItemsBusinessLogic {
     func loadCategoryScreen() {
         presenter.routeToCategoryScreen()
     }
+    
+    func loadPriceScreen() {
+        presenter.routeToPriceScreen()
+    }
+    
 }

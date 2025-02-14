@@ -21,5 +21,13 @@ final class ItemsPresenter: ItemsPresentationLogic {
         categoryVC.modalPresentationStyle = .pageSheet
         view?.present(categoryVC, animated: true)
     }
+    
+    func routeToPriceScreen() {
+        let priceVC = PriceAssembly.build()
+        
+        priceVC.modalPresentationStyle = .pageSheet
+        view?.present(priceVC, animated: true)
+    }
+
 }
 
