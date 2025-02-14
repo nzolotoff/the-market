@@ -5,7 +5,7 @@
 //  Created by Nikita Zolotov on 11.02.2025.
 //
 
-final class Interactor: ItemsBusinessLogic {
+final class ItemsInteractor: ItemsBusinessLogic {
     // MARK: - Fields
     private let presenter: ItemsPresentationLogic
     
@@ -17,5 +17,9 @@ final class Interactor: ItemsBusinessLogic {
     // MARK: - Methods
     func loadStart(_ request: ItemsModel.Start.Request) {
         presenter.presentStart(ItemsModel.Start.Response())
+    }
+    
+    func loadCategoryScreen() {
+        presenter.routeToCategoryScreen()
     }
 }

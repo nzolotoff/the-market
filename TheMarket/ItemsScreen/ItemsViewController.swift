@@ -121,6 +121,7 @@ final class ItemsViewController: UIViewController {
         searchTexfField = ViewFactory.createTextfield(with: Constants.SearchTextField.placeholder)
         searchTexfField.leftView = UIView(frame: Constants.SearchTextField.leftViewRect)
         searchTexfField.leftViewMode = .always
+        searchTexfField.keyboardType = .webSearch
         searchTexfField.delegate = self
         
         let searchImageView: UIImageView = UIImageView(frame: Constants.SearchTextField.leftImageViewRect)
@@ -174,6 +175,8 @@ final class ItemsViewController: UIViewController {
         filterStack.distribution = .fillEqually
         filterStack.spacing = Constants.FilterStack.spacing
         filterStack.addArrangedSubviews(categoryFilter, priceFilter)
+        
+        setActionForCategoryFilter()
         
         contentView.addSubview(filterStack)
         filterStack.pinTop(to: contentView.topAnchor, Constants.FilterStack.topOffset)
@@ -238,6 +241,12 @@ final class ItemsViewController: UIViewController {
         
         cancelButton.isHidden = true
         searchHistoryTable.isHidden = true
+    }
+    
+    private func setActionForCategoryFilter() {
+        categoryFilter.action = { [weak self] in
+            self?.interactor.loadCategoryScreen()
+        }
     }
     
     // MARK: - Animations

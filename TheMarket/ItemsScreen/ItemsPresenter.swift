@@ -5,17 +5,21 @@
 //  Created by Nikita Zolotov on 11.02.2025.
 //
 
-final class Presenter: ItemsPresentationLogic {
+final class ItemsPresenter: ItemsPresentationLogic {
     // MARK: - Variables
     weak var view: ItemsViewController?
     
-    // MARK: - Methods
+    // MARK: - Presentation logic
     func presentStart(_ response: ItemsModel.Start.Response) {
         
     }
     
-    func routeTo() {
+    // MARK: - Routing logic
+    func routeToCategoryScreen() {
+        let categoryVC = CategoryAssembly.build()
         
+        categoryVC.modalPresentationStyle = .pageSheet
+        view?.present(categoryVC, animated: true)
     }
 }
 

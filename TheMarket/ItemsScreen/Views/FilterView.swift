@@ -31,7 +31,8 @@ final class FilterView: UIView {
     // MARK: - Fields
     private var titleLabel: UILabel = UILabel()
     private let arrowImageView: UIImageView = UIImageView()
-    private var action: (() -> Void)?
+
+    var action: (() -> Void)?
     
     // MARK: - Lifycycle
     init (titleText: String) {
@@ -69,15 +70,17 @@ final class FilterView: UIView {
         titleLabel.pinLeft(to: self, Constants.Label.leadingOffset)
         titleLabel.pinTop(to: self, Constants.Label.topOffset)
         titleLabel.pinRight(to: arrowImageView.leadingAnchor)
+        
+        configureRecognizer()
     }
     
     private func configureRecognizer() {
-        let recognizer = UIGestureRecognizer(target: self, action: #selector(viewWasTapped))
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(viewWasTapped))
         addGestureRecognizer(recognizer)
     }
     
     // MARK: - Actions
-    @objc func viewWasTapped() {
+    @objc private func viewWasTapped() {
         action?()
     }
     

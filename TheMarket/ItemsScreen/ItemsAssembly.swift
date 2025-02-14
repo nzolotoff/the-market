@@ -9,8 +9,8 @@ import UIKit
 
 enum ItemsAssembly {
     static func build() -> UIViewController {
-        let presenter = Presenter()
-        let interactor = Interactor(presenter: presenter)
+        let presenter = ItemsPresenter()
+        let interactor = ItemsInteractor(presenter: presenter)
         let view = ItemsViewController(interactor: interactor)
         
         presenter.view = view
