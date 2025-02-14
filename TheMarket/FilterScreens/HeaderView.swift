@@ -10,7 +10,18 @@ import UIKit
 final class HeaderView: UIView {
     // MARK: - Constants
     enum Constants {
+        enum LeftButton {
+            static let width: CGFloat = 20
+            static let leftOffset: CGFloat = 20
+        }
         
+        enum TitleLabel {
+            static let lines: Int = 1
+        }
+        
+        enum RightButton {
+            static let rightOffset: CGFloat = 20
+        }
     }
     
     // MARK: - Fields
@@ -65,8 +76,8 @@ final class HeaderView: UIView {
         
         addSubview(leftButton)
         leftButton.pinVertical(to: self)
-        leftButton.pinLeft(to: self, 20)
-        leftButton.setWidth(20)
+        leftButton.pinLeft(to: self, Constants.LeftButton.leftOffset)
+        leftButton.setWidth(Constants.LeftButton.width)
     }
     
     private func configureTitleLabel(_ text: String) {
@@ -75,7 +86,7 @@ final class HeaderView: UIView {
             textStyle: .title1,
             textColor: .accent,
             alignment: .center,
-            lines: 1
+            lines: Constants.TitleLabel.lines
         )
         
         addSubview(titleLabel)
@@ -97,7 +108,10 @@ final class HeaderView: UIView {
         )
         addSubview(rightButton)
         rightButton.pinVertical(to: self)
-        rightButton.pinRight(to: self, 20)
+        rightButton.pinRight(
+            to: self,
+            Constants.RightButton.rightOffset
+        )
     }
     
     // MARK: - Actions
