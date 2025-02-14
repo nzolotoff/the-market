@@ -18,6 +18,7 @@ final class ItemsViewController: UIViewController {
                 systemName: "magnifyingglass",
                 withConfiguration: UIImage.SymbolConfiguration(weight: .medium)
             )
+            static let animationDuration: CGFloat = 0.3
             static let defaultDecrement: CGFloat = 85
             static let focusedDecrement: CGFloat = 120
             static let topOffset: CGFloat = 12
@@ -230,6 +231,7 @@ final class ItemsViewController: UIViewController {
         let defaultWidth = view.frame.width - Constants.SearchTextField.defaultDecrement
         animateTextFieldWidth(to: defaultWidth)
         searchTexfField.resignFirstResponder()
+        searchTexfField.text = nil
         
         cartButton.isHidden = false
         contentView.isHidden = false
@@ -240,7 +242,9 @@ final class ItemsViewController: UIViewController {
     
     // MARK: - Animations
     private func animateTextFieldWidth(to newWidth: CGFloat) {
-        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+        UIView.animate(
+            withDuration: Constants.SearchTextField.animationDuration,
+            animations: { [weak self] in
             self?.searchTextFieldWidthConstraint?.constant = newWidth
             self?.view?.layoutIfNeeded()
         })
