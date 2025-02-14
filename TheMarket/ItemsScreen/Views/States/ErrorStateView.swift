@@ -21,7 +21,7 @@ final class ErrorStateView: UIView {
             static let lines: Int = 1
             static let topOffset: CGFloat = 24
             static let horizontalOffset: CGFloat = 52
-            static let height: CGFloat = 30
+            static let height: CGFloat = 32
         }
         
         enum ParagraphLabel {
@@ -71,6 +71,7 @@ final class ErrorStateView: UIView {
     
     private func configureIconImageView(_ image: UIImage?) {
         iconImageView.image = image
+        iconImageView.tintColor = UIColor(color: .background)
         
         addSubview(iconImageView)
         iconImageView.pinTop(to: self, Constants.IconImageView.topOffset)
