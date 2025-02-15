@@ -34,23 +34,9 @@ final class ItemsInteractor: NSObject, ItemsBusinessLogic & ItemsDataStore {
         }
     }
     
-//    func loadNewItems() {
-//        worker.fetchItems { [weak self] result in
-//            switch result {
-//            case .success(let items):
-//                // Передаем данные презентеру
-////                self?.items?.removeAll()
-////                self?.items = items
-//                
-//                self?.presenter.presentNewItems(items)
-//            case .failure(let error):
-//                // Обрабатываем ошибку
-//                self?.presenter.presentError(error: error)
-//            }
-//        }
-//    }
     func loadNewItems() {
-        
+        items.removeAll()
+        loadStart()
     }
     
     func loadCategoryFilterScreen() {

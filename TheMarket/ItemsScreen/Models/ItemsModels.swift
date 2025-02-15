@@ -53,13 +53,6 @@ enum Items {
         var imageURL: String?
         var title: String
         var price: String
-        
-//        init(dataModel: Items.DataModel) {
-//            self.id = dataModel.id
-//            self.imageURL = dataModel.images.first
-//            self.title = dataModel.title
-//            self.price = "$\(dataModel.price)"
-//        }
     }
     
     struct SearchQueryViewModel {
@@ -70,15 +63,13 @@ enum Items {
 struct Category: Codable {
     let id: Int
     let name: Name
+    let image: String
 }
 
 enum Name: String, Codable {
-    case clothesItems = "Clothes Items"
+    case clothes = "Clothes"
     case electronics = "Electronics"
     case furniture = "Furniture"
-    case laptop = "Laptop"
     case miscellaneous = "Miscellaneous"
-    case royalItems = "Royal Items"
     case shoes = "Shoes"
-    case string = "string"
 }

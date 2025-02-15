@@ -5,6 +5,7 @@
 //  Created by Nikita Zolotov on 11.02.2025.
 //
 
+import Foundation
 import UIKit
 
 final class ItemsViewController: UIViewController {
@@ -83,6 +84,7 @@ final class ItemsViewController: UIViewController {
         collectionViewLayout: UICollectionViewFlowLayout()
     )
     private let searchHistoryTable: UITableView = UITableView()
+    private var loadingIndicator: UIActivityIndicatorView?
     
     // MARK: - Lyfecycle
     init(interactor: ItemsBusinessLogic & ItemsDataStore) {
@@ -111,14 +113,41 @@ final class ItemsViewController: UIViewController {
     }
     
     func displayError(with error: Error) {
-        let errorView = ErrorStateView(title: error.localizedDescription)
+        DispatchQueue.main.async { [weak self] in
+            self?.hideLoadingIndicator()
+            
+            let errorView = ErrorStateView(title: error.localizedDescription)
+            errorView.buttonAction = { [weak self] in
+                self?.showLoadingIndicator()
+                self?.interactor.loadNewItems()
+            }
+            guard let self else { return }
+            self.view.addSubview(errorView)
+            errorView.pinTop(to: self.filterStack.bottomAnchor)
+            errorView.pinHorizontal(to: self.view)
+            errorView.pinBottom(to: self.view)
+            
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func showLoadingIndicator() {
+        if loadingIndicator == nil {
+            let indicator = UIActivityIndicatorView(style: .large)
+            indicator.center.x = self.view.center.x
+            indicator.center.y = 210
+            indicator.startAnimating()
+            self.view.addSubview(indicator)
+            self.loadingIndicator = indicator
+        }
+    }
+    
+    func hideLoadingIndicator() {
+        guard let indicator = loadingIndicator else { return }
         
-        view.addSubview(errorView)
-        errorView.pinTop(to: filterStack.bottomAnchor)
-        errorView.pinHorizontal(to: view)
-        errorView.pinBottom(to: view)
-        
-        view.layoutIfNeeded()
+        indicator.stopAnimating()
+        indicator.removeFromSuperview()
+        loadingIndicator = nil
     }
     
     // MARK: - Configure UI

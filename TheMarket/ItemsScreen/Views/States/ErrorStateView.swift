@@ -19,17 +19,9 @@ final class ErrorStateView: UIView {
         }
         
         enum TitleLabel {
-            static let lines: Int = 1
-            static let topOffset: CGFloat = 24
-            static let horizontalOffset: CGFloat = 52
-            static let height: CGFloat = 32
-        }
-        
-        enum ParagraphLabel {
             static let lines: Int = 0
             static let topOffset: CGFloat = 24
-            static let horizontalOffset: CGFloat = 64
-            static let defaultDescription: String = "Your internet connection is currently not available please check or try again"
+            static let horizontalOffset: CGFloat = 52
         }
         
         enum TryAgainButton {
@@ -43,7 +35,6 @@ final class ErrorStateView: UIView {
     // MARK: - Fields
     private let iconImageView: UIImageView = UIImageView()
     private var titleLabel: UILabel = UILabel()
-    private var paragraphLabel: UILabel = UILabel()
     private var tryAgainButton: UIButton = UIButton(type: .system)
     
     var buttonAction: (() -> Void)?
@@ -51,11 +42,10 @@ final class ErrorStateView: UIView {
     // MARK: - Lyfecycle
     init(
         icon: UIImage? = Constants.IconImageView.defaultImg,
-        title: String,
-        caption: String = Constants.ParagraphLabel.defaultDescription
+        title: String
     ) {
         super.init(frame: .zero)
-        configureUI(icon, title, caption)
+        configureUI(icon, title)
     }
     
     @available(*, unavailable)
@@ -66,17 +56,16 @@ final class ErrorStateView: UIView {
     // MARK: - Configure UI
     private func configureUI(
         _ icon: UIImage?,
-        _ title: String,
-        _ description: String
+        _ title: String
     ) {
         configureIconImageView(icon)
         configureTitleLabel(title)
-        configureParagraphLabel(description)
         configureTryAgainButton()
     }
     
     private func configureIconImageView(_ image: UIImage?) {
         iconImageView.image = image
+        iconImageView.contentMode = .scaleAspectFit
         iconImageView.tintColor = UIColor(color: .background)
         
         addSubview(iconImageView)
@@ -104,27 +93,6 @@ final class ErrorStateView: UIView {
             to: self,
             Constants.TitleLabel.horizontalOffset
         )
-        titleLabel.setHeight(Constants.TitleLabel.height)
-    }
-    
-    private func configureParagraphLabel(_ text: String) {
-        paragraphLabel = ViewFactory.createLabel(
-            with: text,
-            textStyle: .paragraph,
-            textColor: .secondary,
-            alignment: .center,
-            lines: Constants.ParagraphLabel.lines
-        )
-        
-        addSubview(paragraphLabel)
-        paragraphLabel.pinTop(
-            to: titleLabel.bottomAnchor,
-            Constants.ParagraphLabel.topOffset
-        )
-        paragraphLabel.pinHorizontal(
-            to: self,
-            Constants.ParagraphLabel.horizontalOffset
-        )
     }
     
     private func configureTryAgainButton() {
@@ -139,7 +107,7 @@ final class ErrorStateView: UIView {
         
         addSubview(tryAgainButton)
         tryAgainButton.pinTop(
-            to: paragraphLabel.bottomAnchor,
+            to: titleLabel.bottomAnchor,
             Constants.TryAgainButton.topOffset
         )
         tryAgainButton.pinHorizontal(
