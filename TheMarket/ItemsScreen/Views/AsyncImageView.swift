@@ -97,6 +97,7 @@ final class AsyncImageView: UIView {
     
     private func configureLoadingImageView() {
         loadingImageView.image = Constants.LoadingImageView.image
+        loadingImageView.contentMode = .scaleAspectFit
         
         addSubview(loadingImageView)
         loadingImageView.pin(to: self)

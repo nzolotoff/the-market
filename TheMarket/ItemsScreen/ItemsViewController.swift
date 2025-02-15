@@ -54,7 +54,7 @@ final class ItemsViewController: UIViewController {
                 bottom: 16,
                 right: 20
             )
-            static let cellHeight: CGFloat = 155
+            static let cellHeight: CGFloat = 180
             static let itemSpacing: CGFloat = 16
             static let lineSpacing: CGFloat = 24
             static let topOffset: CGFloat = 4

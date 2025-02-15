@@ -18,12 +18,13 @@ final class ItemCell: UICollectionViewCell {
         }
         
         enum titleLabel {
-            static let lines: Int = 1
+            static let lines: Int = 2
             static let TopOffset: CGFloat = 6
         }
         
         enum priceLabel {
             static let lines: Int = 1
+            static let TopOffset: CGFloat = 6
         }
     }
     
@@ -106,7 +107,10 @@ final class ItemCell: UICollectionViewCell {
         
         wrapView.addSubview(priceLabel)
         priceLabel.pinLeft(to: wrapView)
-        priceLabel.pinBottom(to: wrapView)
+        priceLabel.pinTop(
+            to: titleLabel.bottomAnchor,
+            Constants.priceLabel.TopOffset
+        )
         priceLabel.setContentCompressionResistancePriority(
             .defaultHigh,
             for: .horizontal
