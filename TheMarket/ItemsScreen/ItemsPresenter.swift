@@ -14,6 +14,7 @@ final class ItemsPresenter: ItemsPresentationLogic {
     // MARK: - Presentation logic
     func presentStart() {
         DispatchQueue.main.async { [weak self] in
+            self?.view?.hideLoadingIndicator()
             self?.view?.displayStart()
         }
     }
@@ -23,6 +24,7 @@ final class ItemsPresenter: ItemsPresentationLogic {
     }
         
     func presentError(error: Error) {
+        view?.hideLoadingIndicator()
         view?.displayError(with: error)
     }
     

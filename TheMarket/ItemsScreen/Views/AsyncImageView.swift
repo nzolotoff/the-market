@@ -18,7 +18,7 @@ final class AsyncImageView: UIView {
             static let image: UIImage? = UIImage(
                 systemName: "arrow.triangle.2.circlepath",
                 withConfiguration: UIImage.SymbolConfiguration(
-                    pointSize: 32,
+                    pointSize: 18,
                     weight: .medium
                 )
             )
@@ -97,6 +97,7 @@ final class AsyncImageView: UIView {
     
     private func configureLoadingImageView() {
         loadingImageView.image = Constants.LoadingImageView.image
+        loadingImageView.tintColor = UIColor(color: .accent)
         loadingImageView.contentMode = .scaleAspectFit
         
         addSubview(loadingImageView)
