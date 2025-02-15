@@ -5,15 +5,29 @@
 //  Created by Nikita Zolotov on 11.02.2025.
 //
 
-protocol ItemsBusinessLogic {
-    func loadStart(_ request: ItemsModel.Start.Request)
-    func loadCategoryScreen()
-    func loadPriceScreen()
+import UIKit
+
+protocol ItemsBusinessLogic: UICollectionViewDataSource {
+    func loadStart()
+    func loadNewItems()
+    func loadCategoryFilterScreen()
+    func loadPriceFilterScreen()
 }
 
 protocol ItemsPresentationLogic {
-    func presentStart(_ response: ItemsModel.Start.Response)
+    func presentStart()
+    func presentItems()
+    func presentError(error: Error)
     
-    func routeToCategoryScreen()
-    func routeToPriceScreen()
+    func routeToCategoryFilterScreen()
+    func routeToPriceFilterScreen()
 }
+
+protocol ItemsDataStore {
+    var items: [Items.DataModel] { get }
+}
+
+protocol ItemsWorkingLogic {
+    func fetchItems(completion: @escaping (Result<[Items.DataModel], Error>) -> Void)
+}
+

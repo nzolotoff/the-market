@@ -71,7 +71,7 @@ final class SearchHistoryCell: UITableViewCell {
     }
     
     // MARK: - Cell Configuration
-    func configure(with model: SearchQueryModel) {
+    func configure(with model: Items.SearchQueryViewModel) {
         queryLabel.text = model.query
     }
     

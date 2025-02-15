@@ -15,8 +15,8 @@ final class CategoryInteractor: CategoryBusinessLogic {
     }
     
     // MARK: - Methods
-    func loadStart(_ request: CategoryModels.Start.Request) {
-        presenter.presentStart(CategoryModels.Start.Response())
+    func loadStart() {
+        presenter.presentStart()
     }
     
     func loadCloseScreen() {

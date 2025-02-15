@@ -11,6 +11,7 @@ final class ErrorStateView: UIView {
     // MARK: - Constants
     enum Constants {
         enum IconImageView {
+            static let defaultImg: UIImage? = UIImage(systemName: "exclamationmark.icloud")
             static let topOffset: CGFloat = 52
             static let horizontalOffset: CGFloat = 121
             static let height: CGFloat = 160
@@ -28,6 +29,7 @@ final class ErrorStateView: UIView {
             static let lines: Int = 0
             static let topOffset: CGFloat = 24
             static let horizontalOffset: CGFloat = 64
+            static let defaultDescription: String = "Your internet connection is currently not available please check or try again"
         }
         
         enum TryAgainButton {
@@ -47,7 +49,11 @@ final class ErrorStateView: UIView {
     var buttonAction: (() -> Void)?
     
     // MARK: - Lyfecycle
-    init(icon: UIImage?, title: String, caption: String) {
+    init(
+        icon: UIImage? = Constants.IconImageView.defaultImg,
+        title: String,
+        caption: String = Constants.ParagraphLabel.defaultDescription
+    ) {
         super.init(frame: .zero)
         configureUI(icon, title, caption)
     }
@@ -61,11 +67,11 @@ final class ErrorStateView: UIView {
     private func configureUI(
         _ icon: UIImage?,
         _ title: String,
-        _ caption: String
+        _ description: String
     ) {
         configureIconImageView(icon)
         configureTitleLabel(title)
-        configureParagraphLabel(caption)
+        configureParagraphLabel(description)
         configureTryAgainButton()
     }
     

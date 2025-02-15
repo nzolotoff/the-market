@@ -31,7 +31,7 @@ final class ItemCell: UICollectionViewCell {
     static let reuseIdentifier: String = Constants.reuseIdentifier
     
     private let wrapView: UIView = UIView()
-    private let itemImageView: UIImageView = UIImageView()
+    private let itemImageView: AsyncImageView = AsyncImageView()
     private var titleLabel: UILabel = UILabel()
     private var priceLabel: UILabel = UILabel()
     
@@ -47,12 +47,11 @@ final class ItemCell: UICollectionViewCell {
     }
     
     // MARK: - Cell Configuration
-    func configure(with model: ItemModel) {
-        itemImageView.image = model.image
-        titleLabel.text = model.title
-        priceLabel.text = "$" + model.price
+    func configure(with imageURL: String?, title: String, price: String) {
+        itemImageView.setImage(imageURL: imageURL)
+        titleLabel.text = title
+        priceLabel.text = price
     }
-    
     
     // MARK: - Configure UI
     private func configureUI() {
@@ -89,7 +88,10 @@ final class ItemCell: UICollectionViewCell {
         )
         
         wrapView.addSubview(titleLabel)
-        titleLabel.pinTop(to: itemImageView.bottomAnchor, Constants.titleLabel.TopOffset)
+        titleLabel.pinTop(
+            to: itemImageView.bottomAnchor,
+            Constants.titleLabel.TopOffset
+        )
         titleLabel.pinHorizontal(to: wrapView)
     }
     

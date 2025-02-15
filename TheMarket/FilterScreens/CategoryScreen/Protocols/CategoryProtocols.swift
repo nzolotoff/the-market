@@ -6,12 +6,12 @@
 //
 
 protocol CategoryBusinessLogic {
-    func loadStart(_ request: CategoryModels.Start.Request)
+    func loadStart()
     func loadCloseScreen()
 }
 
 protocol CategoryPresentationLogic {
-    func presentStart(_ response: CategoryModels.Start.Response)
+    func presentStart()
     func presentCloseScreen()
     
     func routeTo()

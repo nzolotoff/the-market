@@ -11,7 +11,7 @@ final class CategoryPresenter: CategoryPresentationLogic {
     weak var view: CategoryViewController?
     
     // MARK: - Methods
-    func presentStart(_ response: CategoryModels.Start.Response) {
+    func presentStart() {
         
     }
     

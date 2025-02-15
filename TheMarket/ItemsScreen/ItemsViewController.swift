@@ -67,7 +67,7 @@ final class ItemsViewController: UIViewController {
     }
     
     // MARK: - Fileds
-    private let interactor: ItemsBusinessLogic
+    private let interactor: ItemsBusinessLogic & ItemsDataStore
     
     // MARK: - UI Components
     private var searchTexfField: UITextField = UITextField()
@@ -85,7 +85,7 @@ final class ItemsViewController: UIViewController {
     private let searchHistoryTable: UITableView = UITableView()
     
     // MARK: - Lyfecycle
-    init(interactor: ItemsBusinessLogic) {
+    init(interactor: ItemsBusinessLogic & ItemsDataStore) {
         self.interactor = interactor
         super.init(nibName: nil, bundle: nil)
     }
@@ -98,6 +98,27 @@ final class ItemsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        interactor.loadStart()
+    }
+    
+    // MARK: - Methods
+    func displayStart() {
+        itemsCollection.reloadData()
+    }
+    
+    func displayError(with error: Error) {
+        let errorView = ErrorStateView(title: error.localizedDescription)
+        
+        view.addSubview(errorView)
+        errorView.pinTop(to: filterStack.bottomAnchor)
+        errorView.pinHorizontal(to: view)
+        errorView.pinBottom(to: view)
+        
+        view.layoutIfNeeded()
     }
     
     // MARK: - Configure UI
@@ -185,7 +206,7 @@ final class ItemsViewController: UIViewController {
     }
     
     private func configureItemsCollection() {
-        itemsCollection.dataSource = self
+        itemsCollection.dataSource = interactor
         itemsCollection.delegate = self
         itemsCollection.backgroundColor = .white
         itemsCollection.alwaysBounceVertical = true
@@ -246,13 +267,13 @@ final class ItemsViewController: UIViewController {
     
     private func setActionForCategoryFilter() {
         categoryFilter.action = { [weak self] in
-            self?.interactor.loadCategoryScreen()
+            self?.interactor.loadCategoryFilterScreen()
         }
     }
     
     private func setActionForPriceFilter() {
         priceFilter.action = { [weak self] in
-            self?.interactor.loadPriceScreen()
+            self?.interactor.loadPriceFilterScreen()
         }
     }
     
@@ -282,40 +303,6 @@ extension ItemsViewController: UITextFieldDelegate {
         
         cancelButton.isHidden = false
         searchHistoryTable.isHidden = false
-    }
-}
-
-// MARK: - UICollectionViewDataSource
-extension ItemsViewController: UICollectionViewDataSource {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
-        return 12
-    }
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ItemCell.reuseIdentifier,
-            for: indexPath
-        )
-        
-        guard let itemCell = cell as? ItemCell else {
-            return cell
-        }
-        
-        itemCell.configure(
-            with: ItemModel(
-                image: UIImage(named: "hoodie") ?? UIImage(),
-                title: "Denim jacket",
-                category: "clothes",
-                price: "100"
-            )
-        )
-        return cell
     }
 }
 
@@ -350,7 +337,7 @@ extension ItemsViewController: UITableViewDataSource {
         guard let searchHistoryCell = cell as? SearchHistoryCell else { return cell }
         
         searchHistoryCell.configure(
-            with: SearchQueryModel(query: "Denim Jacket")
+            with: Items.SearchQueryViewModel(query: "Denim Jacket")
         )
         return searchHistoryCell
     }
