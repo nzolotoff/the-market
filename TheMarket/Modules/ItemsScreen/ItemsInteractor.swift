@@ -39,7 +39,7 @@ final class ItemsInteractor: NSObject, ItemsBusinessLogic & ItemsDataStore {
                 self?.items = items
                 self?.presenter.presentStart()
             case .failure(let error):
-                self?.presenter.presentError(error: error)
+                self?.presenter.presentErrorState(error: error)
             }
         }
     }
@@ -47,16 +47,21 @@ final class ItemsInteractor: NSObject, ItemsBusinessLogic & ItemsDataStore {
     func loadItems(with title: String) {
         worker.searchItems(by: title) { [weak self] result in
             guard let self else { return }
+            
             switch result {
             case .success(let items):
-                self.items.removeAll()
-                self.items = items
-                
-                writeDown(query: title)
-                
-                self.presenter.presentStart()
+                if items.isEmpty {
+                    presenter.presentEmptyState(title)
+                } else {
+                    self.items.removeAll()
+                    self.items = items
+                    
+                    writeDown(query: title)
+                    
+                    self.presenter.presentStart()
+                }
             case .failure(let error):
-                self.presenter.presentError(error: error)
+                self.presenter.presentErrorState(error: error)
             }
         }
     }

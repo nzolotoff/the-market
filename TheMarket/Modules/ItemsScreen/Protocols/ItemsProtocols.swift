@@ -19,7 +19,8 @@ protocol ItemsBusinessLogic: UICollectionViewDataSource, UITableViewDataSource {
 
 protocol ItemsPresentationLogic {
     func presentStart()
-    func presentError(error: Error)
+    func presentErrorState(error: Error)
+    func presentEmptyState(_ responce: String)
     
     func routeToCategoryFilterScreen()
     func routeToPriceFilterScreen()

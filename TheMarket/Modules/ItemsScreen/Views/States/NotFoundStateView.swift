@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class View: UIView {
+final class NotFoundView: UIView {
     // MARK: - Constants
     enum Constants {
         enum IconImageView {
@@ -18,7 +18,7 @@ final class View: UIView {
                     weight: .medium
                 )
             )
-            static let topOffset: CGFloat = 52
+            static let topOffset: CGFloat = 80
             static let horizontalOffset: CGFloat = 140
             static let height: CGFloat = 122
             static let width: CGFloat = 122
@@ -47,7 +47,7 @@ final class View: UIView {
     // MARK: - Lyfecycle
     init(queryName: String) {
         super.init(frame: .zero)
-        configureUI()
+        configureUI(queryName)
     }
     
     @available(*, unavailable)
@@ -56,8 +56,10 @@ final class View: UIView {
     }
     
     // MARK: - Configure UI
-    private func configureUI() {
-        
+    private func configureUI(_ text: String) {
+        configureIconImageView()
+        configureTitleLabel()
+        configureParagraphLabel(text)
     }
     
     private func configureIconImageView() {
@@ -77,7 +79,7 @@ final class View: UIView {
     private func configureTitleLabel() {
         titleLabel = ViewFactory.createLabel(
             with: Constants.TitleLabel.title,
-            textStyle: .title1,
+            textStyle: .heading,
             textColor: .accent,
             alignment: .center,
             lines: Constants.TitleLabel.lines

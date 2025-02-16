@@ -85,6 +85,7 @@ final class ItemsViewController: UIViewController {
     )
     private let searchHistoryTable: UITableView = UITableView()
     private var loadingIndicator: UIActivityIndicatorView?
+    private var emptyView: NotFoundView?
     
     // MARK: - Lyfecycle
     init(interactor: ItemsBusinessLogic & ItemsDataStore) {
@@ -113,7 +114,7 @@ final class ItemsViewController: UIViewController {
         itemsCollection.reloadData()
     }
     
-    func displayError(with error: Error) {
+    func displayErrorState(with error: Error) {
         DispatchQueue.main.async { [weak self] in
             self?.hideLoadingIndicator()
             
@@ -123,13 +124,33 @@ final class ItemsViewController: UIViewController {
                 self?.interactor.loadNewItems()
             }
             guard let self else { return }
-            self.view.addSubview(errorView)
-            errorView.pinTop(to: self.filterStack.bottomAnchor)
-            errorView.pinHorizontal(to: self.view)
-            errorView.pinBottom(to: self.view)
+            view.addSubview(errorView)
+            errorView.pinTop(to: filterStack.bottomAnchor)
+            errorView.pinHorizontal(to: view)
+            errorView.pinBottom(to: view)
             
-            self.view.layoutIfNeeded()
+            view.layoutIfNeeded()
         }
+    }
+    
+    func displayEmptyState(with query: String) {
+        let emptyState = NotFoundView(queryName: query)
+        emptyView = emptyState
+        
+        contentView.isHidden = true
+        
+        view.addSubview(emptyState)
+        emptyState.pinTop(to: filterStack.bottomAnchor)
+        emptyState.pinHorizontal(to: view)
+        emptyState.pinBottom(to: view)
+        
+        view.layoutIfNeeded()
+    }
+    
+    func clearEmptyState() {
+        emptyView = nil
+        
+        view.layoutIfNeeded()
     }
     
     func showLoadingIndicator() {
@@ -331,6 +352,7 @@ final class ItemsViewController: UIViewController {
 extension ItemsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let text = textField.text else { return true }
+        showLoadingIndicator()
         interactor.loadItems(with: text)
         textField.resignFirstResponder()
         defaultState()
@@ -347,6 +369,13 @@ extension ItemsViewController: UITextFieldDelegate {
         
         cancelButton.isHidden = false
         searchHistoryTable.isHidden = false
+    }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        emptyView?.removeFromSuperview()
+        emptyView = nil
+        
+        return true
     }
 }
 

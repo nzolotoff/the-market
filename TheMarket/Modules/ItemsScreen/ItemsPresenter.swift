@@ -19,10 +19,16 @@ final class ItemsPresenter: ItemsPresentationLogic {
         }
     }
     
-    func presentError(error: Error) {
+    func presentErrorState(error: Error) {
         view?.hideLoadingIndicator()
-        view?.displayError(with: error)
+        view?.displayErrorState(with: error)
     }
+    
+    func presentEmptyState(_ responce: String) {
+        view?.hideLoadingIndicator()
+        view?.displayEmptyState(with: responce)
+    }
+    
     
     // MARK: - Routing logic
     func routeShoppingListScreen() {
