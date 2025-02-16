@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol ItemsBusinessLogic: UICollectionViewDataSource {
+protocol ItemsBusinessLogic: UICollectionViewDataSource, UITableViewDataSource {
     func loadStart()
     func loadNewItems()
     func loadCategoryFilterScreen()

@@ -264,7 +264,7 @@ final class ItemsViewController: UIViewController {
     private func configureSearchHistoryTable() {
         searchHistoryTable.backgroundColor = .white
         searchHistoryTable.separatorStyle = .none
-        searchHistoryTable.dataSource = self
+        searchHistoryTable.dataSource = interactor
         searchHistoryTable.delegate = self
         searchHistoryTable.register(
             SearchHistoryCell.self,
@@ -341,6 +341,7 @@ extension ItemsViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         let newWidth = view.bounds.width - Constants.SearchTextField.focusedDecrement
         animateTextFieldWidth(to: newWidth)
+        searchHistoryTable.reloadData()
         cartButton.isHidden = true
         contentView.isHidden = true
         
@@ -364,32 +365,6 @@ extension ItemsViewController: UICollectionViewDelegateFlowLayout {
         didSelectItemAt indexPath: IndexPath
     ) {
         interactor.loadCardScreen(for: indexPath.row)
-    }
-}
-
-// MARK: - UITableViewDataSource
-extension ItemsViewController: UITableViewDataSource {
-    func tableView(
-        _ tableView: UITableView,
-        numberOfRowsInSection section: Int
-    ) -> Int {
-        1
-    }
-    
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-        let cell = searchHistoryTable.dequeueReusableCell(
-            withIdentifier: SearchHistoryCell.reuseIdentifier,
-            for: indexPath
-        )
-        guard let searchHistoryCell = cell as? SearchHistoryCell else { return cell }
-        
-        searchHistoryCell.configure(
-            with: Items.SearchQueryViewModel(query: "Denim Jacket")
-        )
-        return searchHistoryCell
     }
 }
 
