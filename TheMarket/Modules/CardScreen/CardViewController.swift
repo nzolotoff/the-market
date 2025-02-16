@@ -230,6 +230,8 @@ final class CardViewController: UIViewController {
         goToCartButton = ViewFactory.createButton(with: "Go to cart")
         goToCartButton.isHidden = true
         
+        goToCartButton.addTarget(self, action: #selector(goToCartButtonWasTapped), for: .touchUpInside)
+        
         view.addSubview(goToCartButton)
         goToCartButton.pinTop(to: addToCartButton)
         goToCartButton.pinRight(to: view, 20)
@@ -284,6 +286,10 @@ final class CardViewController: UIViewController {
                 self.quantityView.updateQuantity(counter: self.itemCounter)
             }
         }
+    }
+    
+    @objc private func goToCartButtonWasTapped() {
+        interactor.loadShoppingListScreen()
     }
     
 }

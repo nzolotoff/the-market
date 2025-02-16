@@ -13,16 +13,18 @@ protocol ItemsBusinessLogic: UICollectionViewDataSource {
     func loadCategoryFilterScreen()
     func loadPriceFilterScreen()
     func loadCardScreen(for id: Int)
+    func loadShoppingListScreen()
+    func loadItems(with title: String)
 }
 
 protocol ItemsPresentationLogic {
     func presentStart()
-    func presentItems()
     func presentError(error: Error)
     
     func routeToCategoryFilterScreen()
     func routeToPriceFilterScreen()
     func routeToCardScreen(with responce: CardModel)
+    func routeShoppingListScreen()
 }
 
 protocol ItemsDataStore {
@@ -30,6 +32,8 @@ protocol ItemsDataStore {
 }
 
 protocol ItemsWorkingLogic {
+    func searchItems(by title: String, completion: @escaping (Result<[Items.DataModel], Error>) -> Void)
     func fetchItems(completion: @escaping (Result<[Items.DataModel], Error>) -> Void)
 }
+
 

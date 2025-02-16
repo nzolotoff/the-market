@@ -8,7 +8,6 @@
 import Foundation
 
 final class ItemsPresenter: ItemsPresentationLogic {
-    
     // MARK: - Variables
     weak var view: ItemsViewController?
     
@@ -20,16 +19,21 @@ final class ItemsPresenter: ItemsPresentationLogic {
         }
     }
     
-    func presentItems() {
-        
-    }
-        
     func presentError(error: Error) {
         view?.hideLoadingIndicator()
         view?.displayError(with: error)
     }
     
     // MARK: - Routing logic
+    func routeShoppingListScreen() {
+        let shoppingListVC = ShoppingListAssembly.build()
+        
+        view?.navigationController?.pushViewController(
+            shoppingListVC,
+            animated: true
+        )
+    }
+    
     func routeToCategoryFilterScreen() {
         let categoryVC = CategoryAssembly.build()
         

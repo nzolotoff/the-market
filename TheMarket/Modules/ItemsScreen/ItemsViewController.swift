@@ -196,6 +196,7 @@ final class ItemsViewController: UIViewController {
     private func configureCartButton() {
         cartButton.setImage(Constants.CartButton.image, for: .normal)
         cartButton.tintColor = UIColor(color: .accent)
+        cartButton.addTarget(self, action: #selector(cartButtonWasTapped), for: .touchUpInside)
         
         view.addSubview(cartButton)
         cartButton.pinLeft(to: searchTexfField.trailingAnchor, Constants.CartButton.leadingOffset)
@@ -282,17 +283,25 @@ final class ItemsViewController: UIViewController {
     }
     
     // MARK: - Actions
-    @objc private func cancelButtonWasTapped() {
-        let defaultWidth = view.frame.width - Constants.SearchTextField.defaultDecrement
-        animateTextFieldWidth(to: defaultWidth)
-        searchTexfField.resignFirstResponder()
-        searchTexfField.text = nil
-        
+    private func defaultState() {
         cartButton.isHidden = false
         contentView.isHidden = false
         
         cancelButton.isHidden = true
         searchHistoryTable.isHidden = true
+    }
+    
+    @objc private func cartButtonWasTapped() {
+        interactor.loadShoppingListScreen()
+    }
+    
+    @objc private func cancelButtonWasTapped() {
+        let defaultWidth = view.frame.width - Constants.SearchTextField.defaultDecrement
+        animateTextFieldWidth(to: defaultWidth)
+        searchTexfField.resignFirstResponder()
+        searchTexfField.text = nil
+
+        defaultState()
     }
     
     private func setActionForCategoryFilter() {
@@ -321,7 +330,11 @@ final class ItemsViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 extension ItemsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let text = textField.text else { return true }
+        interactor.loadItems(with: text)
         textField.resignFirstResponder()
+        defaultState()
+        animateTextFieldWidth(to: view.bounds.width - Constants.SearchTextField.defaultDecrement)
         return true
     }
     

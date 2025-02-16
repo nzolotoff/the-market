@@ -34,9 +34,26 @@ final class ItemsInteractor: NSObject, ItemsBusinessLogic & ItemsDataStore {
         }
     }
     
+    func loadItems(with title: String) {
+        worker.searchItems(by: title) { [weak self] result in
+            switch result {
+            case .success(let items):
+                self?.items.removeAll()
+                self?.items = items
+                self?.presenter.presentStart()
+            case .failure(let error):
+                self?.presenter.presentError(error: error)
+            }
+        }
+    }
+    
     func loadNewItems() {
         items.removeAll()
         loadStart()
+    }
+    
+    func loadShoppingListScreen() {
+        presenter.routeShoppingListScreen()
     }
     
     func loadCategoryFilterScreen() {
@@ -53,7 +70,7 @@ final class ItemsInteractor: NSObject, ItemsBusinessLogic & ItemsDataStore {
                 imageURL: items[id].images.first,
                 price: "\(items[id].price)",
                 title: items[id].title,
-                category: items[id].category.name.rawValue,
+                category: items[id].category.name,
                 description: items[id].description
             )
         )
