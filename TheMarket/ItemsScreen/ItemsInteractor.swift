@@ -46,6 +46,18 @@ final class ItemsInteractor: NSObject, ItemsBusinessLogic & ItemsDataStore {
     func loadPriceFilterScreen() {
         presenter.routeToPriceFilterScreen()
     }
+    
+    func loadCardScreen(for id: Int) {
+        presenter.routeToCardScreen(
+            with: CardModel(
+                imageURL: items[id].images.first,
+                price: "$\(items[id].price)",
+                title: items[id].title,
+                category: items[id].category.name.rawValue,
+                description: items[id].description
+            )
+        )
+    }
 }
 
 // MARK: - UICollectionViewDataSource

@@ -345,6 +345,13 @@ extension ItemsViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         return CGSize(width: (itemsCollection.bounds.width - 56) / 2, height: Constants.ItemsCollection.cellHeight)
     }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        interactor.loadCardScreen(for: indexPath.row)
+    }
 }
 
 // MARK: - UITableViewDataSource

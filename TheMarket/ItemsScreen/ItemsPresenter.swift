@@ -8,6 +8,7 @@
 import Foundation
 
 final class ItemsPresenter: ItemsPresentationLogic {
+    
     // MARK: - Variables
     weak var view: ItemsViewController?
     
@@ -41,6 +42,15 @@ final class ItemsPresenter: ItemsPresentationLogic {
         
         priceVC.modalPresentationStyle = .pageSheet
         view?.present(priceVC, animated: true)
+    }
+    
+    func routeToCardScreen(with responce: CardModel) {
+        let CardVC = CardAssembly.build(responce)
+        
+        view?.navigationController?.pushViewController(
+            CardVC,
+            animated: true
+        )
     }
 
 }

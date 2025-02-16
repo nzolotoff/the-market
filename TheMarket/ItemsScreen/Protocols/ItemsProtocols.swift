@@ -12,6 +12,7 @@ protocol ItemsBusinessLogic: UICollectionViewDataSource {
     func loadNewItems()
     func loadCategoryFilterScreen()
     func loadPriceFilterScreen()
+    func loadCardScreen(for id: Int)
 }
 
 protocol ItemsPresentationLogic {
@@ -21,6 +22,7 @@ protocol ItemsPresentationLogic {
     
     func routeToCategoryFilterScreen()
     func routeToPriceFilterScreen()
+    func routeToCardScreen(with responce: CardModel)
 }
 
 protocol ItemsDataStore {

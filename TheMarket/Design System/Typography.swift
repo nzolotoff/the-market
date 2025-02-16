@@ -26,6 +26,7 @@ struct FontDescription {
 
 enum TextStyle {
     case heading // 28 px semibold
+    case display // 20 px semibold
     case title1 // 16 px semibold
     case title2 // 14 px semibold
     case titleLight // 14 px light
@@ -47,6 +48,8 @@ extension TextStyle {
         switch self {
         case .heading:
             return FontDescription(font: .semibold, size: 28, style: .largeTitle)
+        case .display:
+            return FontDescription(font: .semibold, size: 20, style: .headline)
         case .title1:
             return FontDescription(font: .semibold, size: 16, style: .title1)
         case .title2:
