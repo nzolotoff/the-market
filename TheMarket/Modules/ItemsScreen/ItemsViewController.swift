@@ -59,6 +59,7 @@ final class ItemsViewController: UIViewController {
             static let itemSpacing: CGFloat = 16
             static let lineSpacing: CGFloat = 24
             static let topOffset: CGFloat = 4
+            static let decrement: CGFloat = 56
         }
         
         enum SearchHistoryTable {
@@ -386,7 +387,10 @@ extension ItemsViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: (itemsCollection.bounds.width - 56) / 2, height: Constants.ItemsCollection.cellHeight)
+        return CGSize(
+            width: (itemsCollection.bounds.width - Constants.ItemsCollection.decrement) / 2,
+            height: Constants.ItemsCollection.cellHeight
+        )
     }
     
     func collectionView(
