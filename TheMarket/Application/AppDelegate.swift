@@ -6,9 +6,31 @@
 //
 
 import UIKit
+import CoreData
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    lazy var persistenceContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "CoreData")
+        container.loadPersistentStores { description, error in
+            if let error {
+                fatalError("Failed to load persistent stores: \(error.localizedDescription)")
+            }
+        }
+        return container
+    }()
+    
+    func saveContext() {
+        let context = persistenceContainer.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                fatalError(error.localizedDescription)
+        }
+    }
+}
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         return true

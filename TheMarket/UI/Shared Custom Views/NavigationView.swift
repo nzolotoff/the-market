@@ -73,10 +73,6 @@ final class NavigationView: UIView {
         )
         
         self.addSubview(goBackIconButton)
-        goBackIconButton.pinTop(
-            to: self.safeAreaLayoutGuide.topAnchor,
-            Constants.GoBackIconButton.topOffset
-        )
         goBackIconButton.pinLeft(to: self, Constants.GoBackIconButton.leadingOffset)
         goBackIconButton.setWidth(Constants.GoBackIconButton.width)
         goBackIconButton.pinVertical(to: self)
@@ -96,7 +92,6 @@ final class NavigationView: UIView {
         )
         
         self.addSubview(shareIconButton)
-        shareIconButton.pinTop(to: goBackIconButton)
         shareIconButton.pinRight(
             to: self,
             Constants.ShareIconButton.trailingOffset

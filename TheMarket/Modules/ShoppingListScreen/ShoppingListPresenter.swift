@@ -11,10 +11,14 @@ final class ShoppingListPresenter: ShoppingListPresentationLogic {
     
     // MARK: - Methods
     func presentStart() {
-        view?.displayStart()
+        view?.displayStart(3)
     }
     
-    func routeTo() {
+    func presentSharingInfo(_ responce: CartItemsSharingModel) {
         
+    }
+    
+    func routeToPreviousScreen() {
+        view?.navigationController?.popViewController(animated: true)
     }
 }
