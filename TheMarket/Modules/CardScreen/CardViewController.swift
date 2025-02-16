@@ -12,29 +12,6 @@ final class CardViewController: UIViewController {
     enum Constants {
         static let animationDuration: Double = 0.3
         
-        enum GoBackIconButton {
-            static let topOffset: CGFloat = 16
-            static let leadingOffset: CGFloat = 12
-            static let height: CGFloat = 32
-            static let width: CGFloat = 32
-            static let imageName: String = "chevron.backward"
-            static let configuration: UIImage.SymbolConfiguration = UIImage.SymbolConfiguration(
-                pointSize: 16,
-                weight: .medium
-            )
-        }
-        
-        enum ShareIconButton {
-            static let trailingOffset: CGFloat = 20
-            static let height: CGFloat = 32
-            static let width: CGFloat = 32
-            static let imageName: String = "arrowshape.turn.up.right.fill"
-            static let configuration: UIImage.SymbolConfiguration = UIImage.SymbolConfiguration(
-                pointSize: 16,
-                weight: .medium
-            )
-        }
-        
         enum asyncImageView {
             static let topOffset: CGFloat = 12
             static let height: CGFloat = 300
@@ -89,8 +66,7 @@ final class CardViewController: UIViewController {
     private var itemCounter: Int = 0
     
     // MARK: - UI Components
-    private var goBackIconButton: UIButton = UIButton(type: .system)
-    private var shareIconButton: UIButton = UIButton(type: .system)
+    private let navigationView: NavigationView = NavigationView(title: "")
     private let asyncImageView: AsyncImageView = AsyncImageView()
     private var priceLabel: UILabel = UILabel()
     private var titleLabel: UILabel = UILabel()
@@ -147,8 +123,7 @@ final class CardViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .white
         configureNavigationBar()
-        configureLeftIconButton()
-        configureShareIconButton()
+        configureNavigationView()
         configureItemImageView()
         configurePriceLabel()
         configureTitleLabel()
@@ -163,50 +138,15 @@ final class CardViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
     }
     
-    private func configureLeftIconButton() {
-        goBackIconButton = ViewFactory.createSystemIconButton(
-            with: Constants.GoBackIconButton.imageName,
-            configuration: Constants.GoBackIconButton.configuration,
-            tintColor: .accent
-        )
+    private func configureNavigationView() {
+        setActionForGoBackButton()
+        setActionForShareButton()
         
-        goBackIconButton.addTarget(
-            self,
-            action: #selector(goBackButtonWasTapped),
-            for: .touchUpInside
-        )
+        view.addSubview(navigationView)
         
-        view.addSubview(goBackIconButton)
-        goBackIconButton.pinTop(
-            to: view.safeAreaLayoutGuide.topAnchor,
-            Constants.GoBackIconButton.topOffset
-        )
-        goBackIconButton.pinLeft(to: view, Constants.GoBackIconButton.leadingOffset)
-        goBackIconButton.setHeight(Constants.GoBackIconButton.height)
-        goBackIconButton.setWidth(Constants.GoBackIconButton.width)
-    }
-    
-    private func configureShareIconButton() {
-        shareIconButton = ViewFactory.createSystemIconButton(
-            with: Constants.ShareIconButton.imageName,
-            configuration: Constants.ShareIconButton.configuration,
-            tintColor: .accent
-        )
-        
-        shareIconButton.addTarget(
-            self,
-            action: #selector(shareButtonWasTapped),
-            for: .touchUpInside
-        )
-        
-        view.addSubview(shareIconButton)
-        shareIconButton.pinTop(to: goBackIconButton)
-        shareIconButton.pinRight(
-            to: view,
-            Constants.ShareIconButton.trailingOffset
-        )
-        shareIconButton.setHeight(Constants.ShareIconButton.height)
-        shareIconButton.setWidth(Constants.ShareIconButton.width)
+        navigationView.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 20)
+        navigationView.pinHorizontal(to: view)
+        navigationView.setHeight(40)
     }
     
     private func configureItemImageView() {
@@ -215,7 +155,7 @@ final class CardViewController: UIViewController {
         
         view.addSubview(asyncImageView)
         asyncImageView.pinTop(
-            to: goBackIconButton.bottomAnchor,
+            to: navigationView.bottomAnchor,
             Constants.asyncImageView.topOffset
         )
         asyncImageView.tintColor = .red
@@ -359,12 +299,16 @@ final class CardViewController: UIViewController {
     }
     
     // MARK: - Actions
-    @objc private func goBackButtonWasTapped() {
-        interactor.loadItemsScreen()
+    func setActionForGoBackButton() {
+        navigationView.goBackIconButtonAction = { [weak self] in
+            self?.interactor.loadItemsScreen()
+        }
     }
     
-    @objc private func shareButtonWasTapped() {
-        interactor.loadSharingInfo()
+    func setActionForShareButton() {
+        navigationView.shareIconButtonAction = { [weak self] in
+            self?.interactor.loadSharingInfo()
+        }
     }
     
     @objc private func addToCartButtonWasTapped() {

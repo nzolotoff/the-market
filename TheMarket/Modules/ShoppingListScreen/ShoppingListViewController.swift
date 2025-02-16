@@ -16,7 +16,7 @@ final class ShoppingListViewController: UIViewController {
     private let interactor: ShoppingListBusinessLogic
     
     // MARK: - UI Components
-    private let headerView: HeaderView = HeaderView(leftButtonImage: UIImage(systemName: "chevron.backward"), title: "Shopping list", rightButtonTitle: "arrowshape.turn.up.right.fill")
+    private let navigationView: NavigationView = NavigationView(title: "Shopping list")
     
     // MARK: - Lyfecycle
     init(interactor: ShoppingListBusinessLogic) {
@@ -47,12 +47,14 @@ final class ShoppingListViewController: UIViewController {
     // MARK: - Configure UI
     private func configureUI() {
         view.backgroundColor = .white
+        configureNavigationView()
     }
     
-    private func configureHeaderView() {
-        view.addSubview(headerView)
+    private func configureNavigationView() {
+        view.addSubview(navigationView)
         
-        headerView.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 20)
-        headerView.pinHorizontal(to: view)
+        navigationView.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 20)
+        navigationView.pinHorizontal(to: view)
+        navigationView.setHeight(40)
     }
 }
