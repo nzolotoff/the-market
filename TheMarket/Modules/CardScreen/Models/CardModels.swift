@@ -13,3 +13,9 @@ struct CardModel {
     var description: String
 }
 
+struct ItemSharingModel {
+    var title: String
+    var price: String
+    var description: String
+}
+

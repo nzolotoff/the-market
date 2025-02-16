@@ -25,4 +25,18 @@ final class CardInteractor: CardBusinessLogic {
         presenter.presentStart(card)
     }
     
+    func loadItemsScreen() {
+        presenter.routeToItemsScreen()
+    }
+    
+    func loadSharingInfo() {
+        presenter.presentSharingInfo(
+            ItemSharingModel(
+                title: card.title,
+                price: card.price,
+                description: card.description
+            )
+        )
+    }
+    
 }

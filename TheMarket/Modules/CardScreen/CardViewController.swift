@@ -15,6 +15,7 @@ final class CardViewController: UIViewController {
     
     // MARK: - Fields
     private let interactor: CardBusinessLogic
+    private var itemCounter: Int = 0
     
     // MARK: - UI Components
     private var goBackIconButton: UIButton = UIButton(type: .system)
@@ -25,6 +26,9 @@ final class CardViewController: UIViewController {
     private var categoryLabel: UILabel = UILabel()
     private var descriptionLabel: UILabel = UILabel()
     private var addToCartButton: UIButton = UIButton(type: .system)
+    private var goToCartButton: UIButton = UIButton(type: .system)
+    private var quantityView: ItemQuantityView = ItemQuantityView()
+    
     
     // MARK: - Lyfecycle
     init(interactor: CardBusinessLogic) {
@@ -50,10 +54,20 @@ final class CardViewController: UIViewController {
     // MARK: Methods
     func displayStart(with model: CardModel) {
         asyncImageView.setImage(imageURL: model.imageURL)
-        priceLabel.text = model.price
+        priceLabel.text = "$" + model.price
         titleLabel.text = model.title
-        categoryLabel.text = model.category
+        categoryLabel.text = "Category: " + model.category
         descriptionLabel.text = model.description
+        
+        view.layoutIfNeeded()
+    }
+    
+    func displayItemSharing(_ itemsToShare: [String]) {
+        let activityVC = UIActivityViewController(
+            activityItems: itemsToShare,
+            applicationActivities: nil
+        )
+        present(activityVC, animated: true)
         
         view.layoutIfNeeded()
     }
@@ -70,6 +84,8 @@ final class CardViewController: UIViewController {
         configureCategoryLabel()
         configureDescriptionLabel()
         configureAddToCartButton()
+        configureQuantityView()
+        configureGoToCartButton()
     }
     
     private func configureNavigationBar() {
@@ -83,9 +99,11 @@ final class CardViewController: UIViewController {
             tintColor: .accent
         )
         
+        goBackIconButton.addTarget(self, action: #selector(goBackButtonWasTapped), for: .touchUpInside)
+        
         view.addSubview(goBackIconButton)
         goBackIconButton.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 16)
-        goBackIconButton.pinLeft(to: view, 20)
+        goBackIconButton.pinLeft(to: view, 12)
         goBackIconButton.setHeight(32)
         goBackIconButton.setWidth(32)
     }
@@ -95,6 +113,12 @@ final class CardViewController: UIViewController {
             with: "arrowshape.turn.up.right.fill",
             configuration: UIImage.SymbolConfiguration(pointSize: 16, weight: .medium),
             tintColor: .accent
+        )
+        
+        shareIconButton.addTarget(
+            self,
+            action: #selector(shareButtonWasTapped),
+            for: .touchUpInside
         )
         
         view.addSubview(shareIconButton)
@@ -118,7 +142,7 @@ final class CardViewController: UIViewController {
     private func configurePriceLabel() {
         priceLabel = ViewFactory.createLabel(
             with: "",
-            textStyle: .title1,
+            textStyle: .heading,
             textColor: .accent,
             alignment: .left,
             lines: 1
@@ -188,8 +212,78 @@ final class CardViewController: UIViewController {
         addToCartButton.setHeight(48)
     }
     
-    // MARK: - Actions
-    @objc private func addToCartButtonWasTapped() {
+    private func configureQuantityView() {
+        SetActionForDecreaseButton()
+        SetActionForIncreaseButton()
+
         
+        quantityView.isHidden = true
+        
+        view.addSubview(quantityView)
+        quantityView.pinTop(to: addToCartButton)
+        quantityView.pinLeft(to: view, 20)
+        quantityView.setWidth(146)
+        quantityView.pinHeight(to: addToCartButton)
     }
+    
+    private func configureGoToCartButton() {
+        goToCartButton = ViewFactory.createButton(with: "Go to cart")
+        goToCartButton.isHidden = true
+        
+        view.addSubview(goToCartButton)
+        goToCartButton.pinTop(to: addToCartButton)
+        goToCartButton.pinRight(to: view, 20)
+        goToCartButton.pinLeft(to: quantityView.trailingAnchor, 8)
+        goToCartButton.pinHeight(to: addToCartButton)
+    }
+    
+    // MARK: - Actions
+    @objc private func goBackButtonWasTapped() {
+        interactor.loadItemsScreen()
+    }
+    
+    @objc private func shareButtonWasTapped() {
+        interactor.loadSharingInfo()
+    }
+    
+    @objc private func addToCartButtonWasTapped() {
+        itemCounter += 1
+        quantityView.updateQuantity(counter: itemCounter)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+            
+            self.addToCartButton.isHidden = true
+            self.goToCartButton.isHidden = false
+            self.quantityView.isHidden = false
+        }
+    }
+    
+    private func SetActionForIncreaseButton() {
+        quantityView.increaseButtonAction = { [weak self] in
+            guard let self else { return }
+
+            self.itemCounter += 1
+            self.quantityView.updateQuantity(counter: self.itemCounter)
+        }
+    }
+    
+    private func SetActionForDecreaseButton() {
+        quantityView.decreaseButtonAction = { [weak self] in
+            guard let self else { return }
+
+            self.itemCounter -= 1
+            if itemCounter == 0 {
+                UIView.animate(withDuration: 0.3) { [weak self] in
+                    guard let self else { return }
+                    
+                    self.addToCartButton.isHidden = false
+                    self.goToCartButton.isHidden = true
+                    self.quantityView.isHidden = true
+                }
+            } else {
+                self.quantityView.updateQuantity(counter: self.itemCounter)
+            }
+        }
+    }
+    
 }

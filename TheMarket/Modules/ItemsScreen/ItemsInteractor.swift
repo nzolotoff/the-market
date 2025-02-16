@@ -51,7 +51,7 @@ final class ItemsInteractor: NSObject, ItemsBusinessLogic & ItemsDataStore {
         presenter.routeToCardScreen(
             with: CardModel(
                 imageURL: items[id].images.first,
-                price: "$\(items[id].price)",
+                price: "\(items[id].price)",
                 title: items[id].title,
                 category: items[id].category.name.rawValue,
                 description: items[id].description
