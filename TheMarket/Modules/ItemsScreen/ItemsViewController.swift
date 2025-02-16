@@ -59,6 +59,7 @@ final class ItemsViewController: UIViewController {
             static let itemSpacing: CGFloat = 16
             static let lineSpacing: CGFloat = 24
             static let topOffset: CGFloat = 4
+            static let decrement: CGFloat = 56
         }
         
         enum SearchHistoryTable {
@@ -85,6 +86,7 @@ final class ItemsViewController: UIViewController {
     )
     private let searchHistoryTable: UITableView = UITableView()
     private var loadingIndicator: UIActivityIndicatorView?
+    private var emptyView: NotFoundView?
     
     // MARK: - Lyfecycle
     init(interactor: ItemsBusinessLogic & ItemsDataStore) {
@@ -113,7 +115,7 @@ final class ItemsViewController: UIViewController {
         itemsCollection.reloadData()
     }
     
-    func displayError(with error: Error) {
+    func displayErrorState(with error: Error) {
         DispatchQueue.main.async { [weak self] in
             self?.hideLoadingIndicator()
             
@@ -123,13 +125,33 @@ final class ItemsViewController: UIViewController {
                 self?.interactor.loadNewItems()
             }
             guard let self else { return }
-            self.view.addSubview(errorView)
-            errorView.pinTop(to: self.filterStack.bottomAnchor)
-            errorView.pinHorizontal(to: self.view)
-            errorView.pinBottom(to: self.view)
+            view.addSubview(errorView)
+            errorView.pinTop(to: filterStack.bottomAnchor)
+            errorView.pinHorizontal(to: view)
+            errorView.pinBottom(to: view)
             
-            self.view.layoutIfNeeded()
+            view.layoutIfNeeded()
         }
+    }
+    
+    func displayEmptyState(with query: String) {
+        let emptyState = NotFoundView(queryName: query)
+        emptyView = emptyState
+        
+        contentView.isHidden = true
+        
+        view.addSubview(emptyState)
+        emptyState.pinTop(to: filterStack.bottomAnchor)
+        emptyState.pinHorizontal(to: view)
+        emptyState.pinBottom(to: view)
+        
+        view.layoutIfNeeded()
+    }
+    
+    func clearEmptyState() {
+        emptyView = nil
+        
+        view.layoutIfNeeded()
     }
     
     func showLoadingIndicator() {
@@ -196,6 +218,7 @@ final class ItemsViewController: UIViewController {
     private func configureCartButton() {
         cartButton.setImage(Constants.CartButton.image, for: .normal)
         cartButton.tintColor = UIColor(color: .accent)
+        cartButton.addTarget(self, action: #selector(cartButtonWasTapped), for: .touchUpInside)
         
         view.addSubview(cartButton)
         cartButton.pinLeft(to: searchTexfField.trailingAnchor, Constants.CartButton.leadingOffset)
@@ -263,7 +286,7 @@ final class ItemsViewController: UIViewController {
     private func configureSearchHistoryTable() {
         searchHistoryTable.backgroundColor = .white
         searchHistoryTable.separatorStyle = .none
-        searchHistoryTable.dataSource = self
+        searchHistoryTable.dataSource = interactor
         searchHistoryTable.delegate = self
         searchHistoryTable.register(
             SearchHistoryCell.self,
@@ -282,17 +305,25 @@ final class ItemsViewController: UIViewController {
     }
     
     // MARK: - Actions
-    @objc private func cancelButtonWasTapped() {
-        let defaultWidth = view.frame.width - Constants.SearchTextField.defaultDecrement
-        animateTextFieldWidth(to: defaultWidth)
-        searchTexfField.resignFirstResponder()
-        searchTexfField.text = nil
-        
+    private func defaultState() {
         cartButton.isHidden = false
         contentView.isHidden = false
         
         cancelButton.isHidden = true
         searchHistoryTable.isHidden = true
+    }
+    
+    @objc private func cartButtonWasTapped() {
+        interactor.loadShoppingListScreen()
+    }
+    
+    @objc private func cancelButtonWasTapped() {
+        let defaultWidth = view.frame.width - Constants.SearchTextField.defaultDecrement
+        animateTextFieldWidth(to: defaultWidth)
+        searchTexfField.resignFirstResponder()
+        searchTexfField.text = nil
+
+        defaultState()
     }
     
     private func setActionForCategoryFilter() {
@@ -321,18 +352,31 @@ final class ItemsViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 extension ItemsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let text = textField.text else { return true }
+        showLoadingIndicator()
+        interactor.loadItems(with: text)
         textField.resignFirstResponder()
+        defaultState()
+        animateTextFieldWidth(to: view.bounds.width - Constants.SearchTextField.defaultDecrement)
         return true
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         let newWidth = view.bounds.width - Constants.SearchTextField.focusedDecrement
         animateTextFieldWidth(to: newWidth)
+        searchHistoryTable.reloadData()
         cartButton.isHidden = true
         contentView.isHidden = true
         
         cancelButton.isHidden = false
         searchHistoryTable.isHidden = false
+    }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        emptyView?.removeFromSuperview()
+        emptyView = nil
+        
+        return true
     }
 }
 
@@ -343,7 +387,10 @@ extension ItemsViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: (itemsCollection.bounds.width - 56) / 2, height: Constants.ItemsCollection.cellHeight)
+        return CGSize(
+            width: (itemsCollection.bounds.width - Constants.ItemsCollection.decrement) / 2,
+            height: Constants.ItemsCollection.cellHeight
+        )
     }
     
     func collectionView(
@@ -351,32 +398,6 @@ extension ItemsViewController: UICollectionViewDelegateFlowLayout {
         didSelectItemAt indexPath: IndexPath
     ) {
         interactor.loadCardScreen(for: indexPath.row)
-    }
-}
-
-// MARK: - UITableViewDataSource
-extension ItemsViewController: UITableViewDataSource {
-    func tableView(
-        _ tableView: UITableView,
-        numberOfRowsInSection section: Int
-    ) -> Int {
-        1
-    }
-    
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-        let cell = searchHistoryTable.dequeueReusableCell(
-            withIdentifier: SearchHistoryCell.reuseIdentifier,
-            for: indexPath
-        )
-        guard let searchHistoryCell = cell as? SearchHistoryCell else { return cell }
-        
-        searchHistoryCell.configure(
-            with: Items.SearchQueryViewModel(query: "Denim Jacket")
-        )
-        return searchHistoryCell
     }
 }
 

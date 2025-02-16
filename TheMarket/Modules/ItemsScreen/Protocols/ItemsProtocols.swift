@@ -7,22 +7,25 @@
 
 import UIKit
 
-protocol ItemsBusinessLogic: UICollectionViewDataSource {
+protocol ItemsBusinessLogic: UICollectionViewDataSource, UITableViewDataSource {
     func loadStart()
     func loadNewItems()
     func loadCategoryFilterScreen()
     func loadPriceFilterScreen()
     func loadCardScreen(for id: Int)
+    func loadShoppingListScreen()
+    func loadItems(with title: String)
 }
 
 protocol ItemsPresentationLogic {
     func presentStart()
-    func presentItems()
-    func presentError(error: Error)
+    func presentErrorState(error: Error)
+    func presentEmptyState(_ responce: String)
     
     func routeToCategoryFilterScreen()
     func routeToPriceFilterScreen()
     func routeToCardScreen(with responce: CardModel)
+    func routeShoppingListScreen()
 }
 
 protocol ItemsDataStore {
@@ -30,6 +33,8 @@ protocol ItemsDataStore {
 }
 
 protocol ItemsWorkingLogic {
+    func searchItems(by title: String, completion: @escaping (Result<[Items.DataModel], Error>) -> Void)
     func fetchItems(completion: @escaping (Result<[Items.DataModel], Error>) -> Void)
 }
+
 

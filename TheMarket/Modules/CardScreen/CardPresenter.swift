@@ -27,4 +27,9 @@ final class CardPresenter: CardPresentationLogic {
     func routeToItemsScreen() {
         view?.navigationController?.popViewController(animated: true)
     }
+    
+    func routeToShoppingListScreen() {
+        let ShoppingListVC = ShoppingListAssembly.build()
+        view?.navigationController?.pushViewController(ShoppingListVC, animated: true)
+    }
 }

@@ -13,7 +13,6 @@ final class CardInteractor: CardBusinessLogic {
     
     var card: CardModel
     
-    
     // MARK: - Lifecycle
     init(presenter: CardPresentationLogic, card: CardModel) {
         self.presenter = presenter
@@ -37,6 +36,10 @@ final class CardInteractor: CardBusinessLogic {
                 description: card.description
             )
         )
+    }
+    
+    func loadShoppingListScreen() {
+        presenter.routeToShoppingListScreen()
     }
     
 }

@@ -14,29 +14,57 @@ enum NetworkError: Error {
 }
 
 final class ItemsWorker: ItemsWorkingLogic {
+    // MARK: - Fields
+    private let baseURL = "https://api.escuelajs.co/api/v1/products"
+    
+    // MARK: - Methods
     func fetchItems(completion: @escaping (Result<[Items.DataModel], Error>) -> Void) {
-        let urlString = "https://api.escuelajs.co/api/v1/products"
+        performRequest(urlString: baseURL, completion: completion)
+    }
+    
+    func searchItems(by title: String, completion: @escaping (Result<[Items.DataModel], Error>) -> Void) {
+        let encodedTitle = title.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let urlString = "\(baseURL)?title=\(encodedTitle)"
+        performRequest(urlString: urlString, completion: completion)
+    }
+    
+    // MARK: - Private methods
+    private func performRequest<T: Decodable>(
+        urlString: String,
+        completion: @escaping (Result<T, Error>) -> Void
+    ) {
         guard let url = URL(string: urlString) else {
-            completion(.failure(NetworkError.invalidURL))
+            DispatchQueue.main.async {
+                completion(.failure(NetworkError.invalidURL))
+            }
             return
         }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
                 return
             }
             
             guard let data = data else {
-                completion(.failure(NetworkError.noData))
+                DispatchQueue.main.async {
+                    completion(.failure(NetworkError.noData))
+                }
                 return
             }
             
             do {
-                let items = try JSONDecoder().decode([Items.DataModel].self, from: data)
-                completion(.success(items))
+                let decodedData = try JSONDecoder().decode(T.self, from: data)
+                
+                DispatchQueue.main.async {
+                    completion(.success(decodedData))
+                }
             } catch {
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(NetworkError.decodingError))
+                }
             }
         }.resume()
     }

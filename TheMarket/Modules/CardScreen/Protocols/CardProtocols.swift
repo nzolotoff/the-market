@@ -7,8 +7,10 @@
 
 protocol CardBusinessLogic {
     func loadStart()
-    func loadItemsScreen()
     func loadSharingInfo()
+    func loadItemsScreen()
+    func loadShoppingListScreen()
+
 }
 
 protocol CardPresentationLogic {
@@ -16,4 +18,5 @@ protocol CardPresentationLogic {
     func presentSharingInfo(_ responce: ItemSharingModel)
     
     func routeToItemsScreen()
+    func routeToShoppingListScreen()
 }

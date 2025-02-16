@@ -10,7 +10,55 @@ import UIKit
 final class CardViewController: UIViewController {
     // MARK: - Constants
     enum Constants {
+        static let animationDuration: Double = 0.3
         
+        enum asyncImageView {
+            static let topOffset: CGFloat = 12
+            static let height: CGFloat = 300
+        }
+        
+        enum PriceLabel {
+            static let topOffset: CGFloat = 12
+            static let horizontalOffset: CGFloat = 12
+            static let height: CGFloat = 32
+            static let lines: Int = 1
+        }
+        
+        enum TitleLabel {
+            static let topOffset: CGFloat = 12
+            static let lines: Int = 0
+        }
+        
+        enum CategoryLabel {
+            static let topOffset: CGFloat = 12
+            static let lines: Int = 1
+        }
+        
+        enum DescriptionLabel {
+            static let topOffset: CGFloat = 12
+            static let horizontalOffset: CGFloat = 12
+            static let lines: Int = 0
+        }
+        
+        enum AddToCartButton {
+            static let title: String = "Add to shopping list"
+            static let horizontalOffset: CGFloat = 12
+            static let bottomOffset: CGFloat = 80
+            static let height: CGFloat = 48
+
+        }
+        
+        enum QuantityView {
+            static let leftOffset: CGFloat = 20
+            static let widthOffset: CGFloat = 146
+        }
+        
+        enum GoToCartButton {
+            static let title: String = "Go to cart"
+            static let leftOffset: CGFloat = 8
+            static let rightOffset: CGFloat = 20
+
+        }
     }
     
     // MARK: - Fields
@@ -18,8 +66,7 @@ final class CardViewController: UIViewController {
     private var itemCounter: Int = 0
     
     // MARK: - UI Components
-    private var goBackIconButton: UIButton = UIButton(type: .system)
-    private var shareIconButton: UIButton = UIButton(type: .system)
+    private let navigationView: NavigationView = NavigationView(title: "")
     private let asyncImageView: AsyncImageView = AsyncImageView()
     private var priceLabel: UILabel = UILabel()
     private var titleLabel: UILabel = UILabel()
@@ -76,8 +123,7 @@ final class CardViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .white
         configureNavigationBar()
-        configureLeftIconButton()
-        configureShareIconButton()
+        configureNavigationView()
         configureItemImageView()
         configurePriceLabel()
         configureTitleLabel()
@@ -92,40 +138,15 @@ final class CardViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
     }
     
-    private func configureLeftIconButton() {
-        goBackIconButton = ViewFactory.createSystemIconButton(
-            with: "chevron.backward",
-            configuration: UIImage.SymbolConfiguration(pointSize: 16, weight: .medium),
-            tintColor: .accent
-        )
+    private func configureNavigationView() {
+        setActionForGoBackButton()
+        setActionForShareButton()
         
-        goBackIconButton.addTarget(self, action: #selector(goBackButtonWasTapped), for: .touchUpInside)
+        view.addSubview(navigationView)
         
-        view.addSubview(goBackIconButton)
-        goBackIconButton.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 16)
-        goBackIconButton.pinLeft(to: view, 12)
-        goBackIconButton.setHeight(32)
-        goBackIconButton.setWidth(32)
-    }
-    
-    private func configureShareIconButton() {
-        shareIconButton = ViewFactory.createSystemIconButton(
-            with: "arrowshape.turn.up.right.fill",
-            configuration: UIImage.SymbolConfiguration(pointSize: 16, weight: .medium),
-            tintColor: .accent
-        )
-        
-        shareIconButton.addTarget(
-            self,
-            action: #selector(shareButtonWasTapped),
-            for: .touchUpInside
-        )
-        
-        view.addSubview(shareIconButton)
-        shareIconButton.pinTop(to: goBackIconButton)
-        shareIconButton.pinRight(to: view, 20)
-        shareIconButton.setHeight(32)
-        shareIconButton.setWidth(32)
+        navigationView.pinTop(to: view.safeAreaLayoutGuide.topAnchor, 20)
+        navigationView.pinHorizontal(to: view)
+        navigationView.setHeight(40)
     }
     
     private func configureItemImageView() {
@@ -133,10 +154,13 @@ final class CardViewController: UIViewController {
         asyncImageView.backgroundColor = UIColor(color: .background)
         
         view.addSubview(asyncImageView)
-        asyncImageView.pinTop(to: goBackIconButton.bottomAnchor, 12)
+        asyncImageView.pinTop(
+            to: navigationView.bottomAnchor,
+            Constants.asyncImageView.topOffset
+        )
         asyncImageView.tintColor = .red
         asyncImageView.pinHorizontal(to: view)
-        asyncImageView.setHeight(300)
+        asyncImageView.setHeight(Constants.asyncImageView.height)
     }
     
     private func configurePriceLabel() {
@@ -145,13 +169,19 @@ final class CardViewController: UIViewController {
             textStyle: .heading,
             textColor: .accent,
             alignment: .left,
-            lines: 1
+            lines: Constants.PriceLabel.lines
         )
         
         view.addSubview(priceLabel)
-        priceLabel.pinTop(to: asyncImageView.bottomAnchor, 12)
-        priceLabel.pinHorizontal(to: view, 20)
-        priceLabel.setHeight(32)
+        priceLabel.pinTop(
+            to: asyncImageView.bottomAnchor,
+            Constants.PriceLabel.topOffset
+        )
+        priceLabel.pinHorizontal(
+            to: view,
+            Constants.PriceLabel.horizontalOffset
+        )
+        priceLabel.setHeight(Constants.PriceLabel.height)
     }
     
     private func configureTitleLabel() {
@@ -160,11 +190,14 @@ final class CardViewController: UIViewController {
             textStyle: .display,
             textColor: .accent,
             alignment: .left,
-            lines: 0
+            lines: Constants.TitleLabel.lines
         )
         
         view.addSubview(titleLabel)
-        titleLabel.pinTop(to: priceLabel.bottomAnchor, 12)
+        titleLabel.pinTop(
+            to: priceLabel.bottomAnchor,
+            Constants.TitleLabel.topOffset
+        )
         titleLabel.pinHorizontal(to: priceLabel)
     }
     
@@ -174,11 +207,14 @@ final class CardViewController: UIViewController {
             textStyle: .caption,
             textColor: .accent,
             alignment: .left,
-            lines: 1
+            lines: Constants.CategoryLabel.lines
         )
         
         view.addSubview(categoryLabel)
-        categoryLabel.pinTop(to: titleLabel.bottomAnchor, 12)
+        categoryLabel.pinTop(
+            to: titleLabel.bottomAnchor,
+            Constants.CategoryLabel.topOffset
+        )
         categoryLabel.pinHorizontal(to: titleLabel)
     }
     
@@ -188,16 +224,24 @@ final class CardViewController: UIViewController {
             textStyle: .paragraph,
             textColor: .secondary,
             alignment: .left,
-            lines: 0
+            lines: Constants.DescriptionLabel.lines
         )
         
         view.addSubview(descriptionLabel)
-        descriptionLabel.pinTop(to: categoryLabel.bottomAnchor, 12)
-        descriptionLabel.pinHorizontal(to: view, 20)
+        descriptionLabel.pinTop(
+            to: categoryLabel.bottomAnchor,
+            Constants.DescriptionLabel.topOffset
+        )
+        descriptionLabel.pinHorizontal(
+            to: view,
+            Constants.DescriptionLabel.horizontalOffset
+        )
     }
     
     private func configureAddToCartButton() {
-        addToCartButton = ViewFactory.createButton(with: "Add to cart")
+        addToCartButton = ViewFactory.createButton(
+            with: Constants.AddToCartButton.title
+        )
         addToCartButton.addTarget(
             self,
             action: #selector(
@@ -207,9 +251,15 @@ final class CardViewController: UIViewController {
         )
         
         view.addSubview(addToCartButton)
-        addToCartButton.pinHorizontal(to: view, 20)
-        addToCartButton.pinBottom(to: view, 80)
-        addToCartButton.setHeight(48)
+        addToCartButton.pinHorizontal(
+            to: view,
+            Constants.AddToCartButton.horizontalOffset
+        )
+        addToCartButton.pinBottom(
+            to: view,
+            Constants.AddToCartButton.bottomOffset
+        )
+        addToCartButton.setHeight(Constants.AddToCartButton.height)
     }
     
     private func configureQuantityView() {
@@ -221,35 +271,50 @@ final class CardViewController: UIViewController {
         
         view.addSubview(quantityView)
         quantityView.pinTop(to: addToCartButton)
-        quantityView.pinLeft(to: view, 20)
-        quantityView.setWidth(146)
+        quantityView.pinLeft(to: view, Constants.QuantityView.leftOffset)
+        quantityView.setWidth(Constants.QuantityView.widthOffset)
         quantityView.pinHeight(to: addToCartButton)
     }
     
     private func configureGoToCartButton() {
-        goToCartButton = ViewFactory.createButton(with: "Go to cart")
+        goToCartButton = ViewFactory.createButton(
+            with: Constants.GoToCartButton.title
+        )
         goToCartButton.isHidden = true
+        
+        goToCartButton.addTarget(
+            self,
+            action: #selector(goToCartButtonWasTapped),
+            for: .touchUpInside
+        )
         
         view.addSubview(goToCartButton)
         goToCartButton.pinTop(to: addToCartButton)
-        goToCartButton.pinRight(to: view, 20)
-        goToCartButton.pinLeft(to: quantityView.trailingAnchor, 8)
+        goToCartButton.pinRight(to: view, Constants.GoToCartButton.rightOffset)
+        goToCartButton.pinLeft(
+            to: quantityView.trailingAnchor,
+            Constants.GoToCartButton.leftOffset
+        )
         goToCartButton.pinHeight(to: addToCartButton)
     }
     
     // MARK: - Actions
-    @objc private func goBackButtonWasTapped() {
-        interactor.loadItemsScreen()
+    func setActionForGoBackButton() {
+        navigationView.goBackIconButtonAction = { [weak self] in
+            self?.interactor.loadItemsScreen()
+        }
     }
     
-    @objc private func shareButtonWasTapped() {
-        interactor.loadSharingInfo()
+    func setActionForShareButton() {
+        navigationView.shareIconButtonAction = { [weak self] in
+            self?.interactor.loadSharingInfo()
+        }
     }
     
     @objc private func addToCartButtonWasTapped() {
         itemCounter += 1
         quantityView.updateQuantity(counter: itemCounter)
-        UIView.animate(withDuration: 0.3) { [weak self] in
+        UIView.animate(withDuration: Constants.animationDuration) { [weak self] in
             guard let self else { return }
             
             self.addToCartButton.isHidden = true
@@ -273,7 +338,7 @@ final class CardViewController: UIViewController {
 
             self.itemCounter -= 1
             if itemCounter == 0 {
-                UIView.animate(withDuration: 0.3) { [weak self] in
+                UIView.animate(withDuration: Constants.animationDuration) { [weak self] in
                     guard let self else { return }
                     
                     self.addToCartButton.isHidden = false
@@ -286,4 +351,7 @@ final class CardViewController: UIViewController {
         }
     }
     
+    @objc private func goToCartButtonWasTapped() {
+        interactor.loadShoppingListScreen()
+    }
 }
