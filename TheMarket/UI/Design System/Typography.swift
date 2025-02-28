@@ -33,6 +33,7 @@ enum TextStyle {
     
     case body // 16 px medium
     
+    case paragraphBig // 18px regular
     case paragraph // 16px regular
     case paragraphSmall // 14px regular
     
@@ -58,6 +59,8 @@ extension TextStyle {
             return FontDescription(font: .light, size: 14, style: .caption1)
         case .body:
             return FontDescription(font: .medium, size: 16, style: .body)
+        case .paragraphBig:
+            return FontDescription(font: .regular, size: 18, style: .body)
         case .paragraph:
             return FontDescription(font: .regular, size: 16, style: .body)
         case .paragraphSmall:

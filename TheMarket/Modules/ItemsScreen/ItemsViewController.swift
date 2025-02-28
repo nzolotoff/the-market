@@ -102,12 +102,12 @@ final class ItemsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        showLoadingIndicator()
+        interactor.loadStart()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        showLoadingIndicator()
-        interactor.loadStart()
     }
     
     // MARK: - Methods
@@ -357,7 +357,9 @@ extension ItemsViewController: UITextFieldDelegate {
         interactor.loadItems(with: text)
         textField.resignFirstResponder()
         defaultState()
-        animateTextFieldWidth(to: view.bounds.width - Constants.SearchTextField.defaultDecrement)
+        animateTextFieldWidth(
+            to: view.bounds.width - Constants.SearchTextField.defaultDecrement
+        )
         return true
     }
     

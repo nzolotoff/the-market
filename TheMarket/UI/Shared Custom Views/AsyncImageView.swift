@@ -11,7 +11,7 @@ final class AsyncImageView: UIView {
     // MARK: - Constants
     enum Constants {
         enum Error {
-            static let errorImage = UIImage(named: "error")
+            static let errorImage = UIImage(named: "Error")
         }
         
         enum LoadingImageView {
@@ -42,43 +42,50 @@ final class AsyncImageView: UIView {
     }
     
     // MARK: - Methods
+    func reset() {
+        imageView.image = nil
+        currentLoadingURL = nil
+        loadingImageView.isHidden = false
+    }
+    
     func setImage(imageURL: String?) {
         if let URL = imageURL {
             loadImage(path: URL)
         } else {
+            loadingImageView.isHidden = true
             imageView.image = Constants.Error.errorImage
         }
     }
     
     func loadImage(path: String) {
-            let path = path.trimmingCharacters(in: CharacterSet(charactersIn: "[]\""))
-            guard let url = URL(string: path), url != currentLoadingURL else { return }
-            
-            currentLoadingURL = url
-            if url.scheme == "http" {
-                showErrorView()
+        let path = path.trimmingCharacters(in: CharacterSet(charactersIn: "[]\""))
+        guard let url = URL(string: path), url != currentLoadingURL else { return }
+        
+        currentLoadingURL = url
+        if url.scheme == "http" {
+            showErrorView()
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            if error != nil  {
+                self?.showErrorView()
+                print(error?.localizedDescription ?? "Unknown error")
                 return
             }
             
-            URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-                if error != nil  {
-                    self?.showErrorView()
-                    print(error?.localizedDescription ?? "Unknown error")
-                    return
-                }
-                
-                guard let data = data, let image = UIImage(data: data) else {
-                    self?.showErrorView()
-                    return
-                }
-                
-                DispatchQueue.main.async { [weak self] in
-                    guard self?.currentLoadingURL == url else { return }
-                    self?.imageView.image = image
-                    self?.loadingImageView.isHidden = true
-                }
-            }.resume()
-        }
+            guard let data = data, let image = UIImage(data: data) else {
+                self?.showErrorView()
+                return
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                guard self?.currentLoadingURL == url else { return }
+                self?.imageView.image = image
+                self?.loadingImageView.isHidden = true
+            }
+        }.resume()
+    }
     
     // MARK: - Configure UI
     private func configureUI() {
@@ -107,6 +114,7 @@ final class AsyncImageView: UIView {
     private func showErrorView() {
         DispatchQueue.main.async { [weak self] in
             self?.imageView.image = Constants.Error.errorImage
+            self?.currentLoadingURL = nil
             self?.loadingImageView.isHidden = true
         }
     }

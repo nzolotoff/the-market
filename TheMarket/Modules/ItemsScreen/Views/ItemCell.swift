@@ -47,6 +47,10 @@ final class ItemCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        itemImageView.reset()
+    }
+    
     // MARK: - Cell Configuration
     func configure(with imageURL: String?, title: String, price: String) {
         itemImageView.setImage(imageURL: imageURL)

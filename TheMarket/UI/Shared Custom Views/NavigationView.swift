@@ -12,7 +12,7 @@ final class NavigationView: UIView {
     enum Constants {
         enum GoBackIconButton {
             static let topOffset: CGFloat = 16
-            static let leadingOffset: CGFloat = 12
+            static let leadingOffset: CGFloat = 8
             static let width: CGFloat = 32
             static let imageName: String = "chevron.backward"
             static let configuration: UIImage.SymbolConfiguration = UIImage.SymbolConfiguration(
@@ -103,7 +103,7 @@ final class NavigationView: UIView {
     private func configureTitleLabel(_ text: String) {
         titleLabel = ViewFactory.createLabel(
             with: text,
-            textStyle: .paragraph,
+            textStyle: .paragraphBig,
             textColor: .accent,
             alignment: .center,
             lines: 1
